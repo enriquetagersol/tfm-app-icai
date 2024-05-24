@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Aplicación SPA</title>
+
+    <!--AJAX-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- COGNITO -->
+    <script src="./js/aws-sdk-2.487.0.min.js"></script>
+    <script src="./js/aws-cognito-sdk.min.js"></script>
+    <script src="./js/amazon-cognito-identity.min.js"></script>
+
+    <!-- Mis Scripts -->
+    <script src="./js/funcionesCarga.js"></script>
+    <script src="./js/funcionesCognito.js"></script>
+</head>
+
+<body>
+
+    <br>
+
+    
+    <div class="form-group">
+        <label style="font-weight: bold;">Nombre</label>
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control" id="first_name_id" placeholder="Nombre">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" id="last_name_id" placeholder="Apellidos">
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+
+    <div class="form-group">
+        <label style="font-weight: bold;">Datos de Contacto</label>
+        <div class="row">
+            <div class="col">
+                <input class="form-control" type="text" id="phone_id" placeholder="Teléfono">
+            </div>
+            <div class="col">
+                <input type="email" class="form-control" id="email_id" placeholder="Email">
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="form-group">
+        <label style="font-weight: bold;">Rol de usuario</label>
+        <select class="form-control w3-select" id="rol_id">
+            <option>----</option>
+            <option value="owner">Propietario</option>
+            <option value="tenant">Inquilino</option>
+        </select>
+    </div>
+
+    <br>
+
+    <div class="w-100">
+      <div class="alert alert-danger w-100 m-0"  role="alert" style="display: none;" id="error_inviteUser_alert_id">
+      </div>
+      <div class="alert alert-success w-100 m-0" role="alert" style="display: none;" id="inviteUser_OK_alert_id">
+      </div>
+   </div>
+
+   <br>
+
+
+
+</body>
+
+</html>

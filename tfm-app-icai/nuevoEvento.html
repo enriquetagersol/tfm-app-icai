@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Aplicación SPA</title>
+
+    <!--AJAX-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- COGNITO -->
+    <script src="./js/aws-sdk-2.487.0.min.js"></script>
+    <script src="./js/aws-cognito-sdk.min.js"></script>
+    <script src="./js/amazon-cognito-identity.min.js"></script>
+
+    <!-- Mis Scripts -->
+    <script src="./js/funcionesCarga.js"></script>
+    <script src="./js/funcionesCognito.js"></script>
+    <script src="./js/funcionesAdmin.js"></script>
+
+    </head>
+
+<body>
+
+   <br>
+
+   <div class="form-group">
+      <label style="font-weight: bold;">Titulo-Asunto</label>
+      <input type="text" class="form-control" id="titulo_evento_id">
+   </div> 
+
+   <br>
+
+   <div class="form-group">
+      <label style="font-weight: bold;">Descripción-Mensaje</label>
+      <textarea class="form-control" id="descripcion_evento_id" rows="3"></textarea>
+   </div> 
+
+   <br>
+
+   <div class="form-group">
+
+      <label style="font-weight: bold;">Fecha y hora del evento</label>
+      
+      <br>
+         <div class="row">
+            <div class="col">
+               <label>Inicio</label>
+               <input type="datetime-local" class="form-control" id="start_evento_id" name="eventStart">
+            </div>
+            <div class="col">
+               <label>Fin</label>
+               <input type="datetime-local" class="form-control" id="end_evento_id" name="eventEnd" required>
+            </div>
+         </div>
+   </div>
+
+   <br>
+   
+   <div class="w-100">
+      <div class="alert alert-danger w-100 m-0"  role="alert" style="display: none;" id="error_evento_alert_id">
+      </div>
+      <div class="alert alert-success w-100 m-0" role="alert" style="display: none;" id="evento_OK_alert_id">
+      </div>
+   </div>
+   
+   <br>
+
+</body>
+
+</html>
