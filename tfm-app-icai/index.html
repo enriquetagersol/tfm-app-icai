@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Aplicación SPA</title>
+
+    <!--AJAX-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!--FontAwesome-->
+    <script src="https://kit.fontawesome.com/bc29e07588.js" crossorigin="anonymous"></script>
+
+    <!-- COGNITO -->
+    <script src="./js/aws-sdk-2.487.0.min.js"></script>
+    <script src="./js/aws-cognito-sdk.min.js"></script>
+    <script src="./js/amazon-cognito-identity.min.js"></script>
+
+    <!-- Mis Scripts -->
+    <script src="./js/funcionesCarga.js"></script>
+    <script src="./js/funcionesCognito.js"></script>
+    <script src="./js/funcionesAdmin.js"></script>
+    <script src="./js/funcionesUser.js"></script>
+
+    <style>
+
+		.navbar {
+		    width: 100%; 
+		    display: flex; 
+		    justify-content: center; 
+		    background-color: #295E7E;
+		}	
+        #contenido-ajax {
+            width: 60%; 
+		    max-height: 87vh; 
+		    height: auto; 
+		    margin: 30px auto; 
+		    background-color: white;
+		    padding: 20px;
+		    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+		    border-radius: 10px;
+		    overflow: auto; 
+		    display: flex;
+		    flex-direction: column; 
+		    justify-content: flex-start;      
+        }
+        #formulario-login {
+            width: 80%; 
+            padding: 20px; 
+            margin-left: auto;
+			margin-right: auto;
+            display: flex; 
+		    flex-direction: column; 
+		    justify-content: center; 
+		}
+
+
+
+    </style>
+
+</head>
+
+<body style="background-color:#AEBAC2;">
+
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<nav class="navbar" style="background-color:#295E7E; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; height: 50px">
+
+	    <!--Botones izquierda -->
+	    <div style="flex: 1;">
+	        <div class="btn-group">
+	            <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="inbox_admin_id" style="display: none">
+	                <span class="badge text-bg-secondary rounded-pill" id="count_mensajes_admin_id"> </span><i class="bi bi-inbox-fill"></i>
+	            </button>
+	            <ul class="dropdown-menu" id="dropdownMenu_msg_id" style="position: absolute; z-index: 1000; width: 700px;">
+	                <!--Dropdown menu-->
+	            </ul>
+	        </div>
+	    </div>
+
+	    <!-- Título centrado -->
+	    <div style="flex: 0 1 auto;">
+	        <span class="navbar-brand mb-0 h1" style="color: ghostwhite;" id="titulo_app_id">MI APLICACIÓN</span>
+	    </div>
+
+	    <!-- Botones derecha -->
+	    <div style="flex: 1; display: flex; justify-content: flex-end;">
+	        <button type="button" id="btn_add_finca_id" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#modal_RegFinca_id" onclick="cargarFormularioFinca()" style="display: none;">
+	            Nueva Finca <i class="bi bi-building-fill-add"></i>
+	        </button>
+	        <button type="button" id="btn_signOut_id" class="btn btn-light" onclick="signOut()" style="display: none; margin-left: 5px;">Cerrar sesión</button>
+	    </div>
+	</nav>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+	<div id="contenido-ajax">
+		<div id="formulario-login">
+			<div>
+		      <label for="username_id" style="font-weight: bold;">Usuario</label>
+		      <input type="text" class="form-control" id="username_id">
+		    </div>
+		    <br>
+		    <div>
+		      <label for="pass_id" style="font-weight: bold;">Contraseña</label>
+		      <input type="password" class="form-control" id="pass_id">
+		    </div>
+		    <br>
+		    <button type="button" class="btn btn-secondary" onclick="signIn()">Iniciar sesión</button>
+		</div>
+	</div>
+
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Sign In -- PENDIENTE DE BORRAR -->
+	<div class="modal fade" id="modal_SignIn_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Inicio de sesión</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_SignIn_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+	        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+	        <button type="button" class="btn btn-light" data-bs-dismiss="modal" onclick="signIn()">Iniciar sesión</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Registrar Finca-->
+	<div class="modal fade" id="modal_RegFinca_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Registrar Propiedades</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_RegFinca_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			    <button type="button" class="btn btn-light" onclick="registerEstate()">Registrar</button>
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Info Finca -->
+	<div class="modal fade" id="modal_InfoFinca_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Información de la Finca</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_InfoFinca_body_id">
+	      	<h5>Dirección</h5><h7><span id="modalDireccion"></span></h7><br>
+	        <h5>Región</h5><h7><span id="modalRegion"></span></h7><br>
+	        <h5>CP</h5><h7><span id="modalCp"></span></h7>
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+	        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Invitar User-->
+	<div class="modal fade" id="modal_Invite_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Añadir Usuario</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_Invite_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+	        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+	        <button type="button" class="btn btn-light" onclick="inviteUser()" id="botonInvitar" style="display:none">Invitar</button>
+	        <button type="button" class="btn btn-light" onclick="comprobarUser()" id="botonBuscar" style="display:none">Comprobar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Mandar Archivo Mail-->
+	<div class="modal fade" id="modal_mandar_archivo_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Enviar archivo</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_mandar_archivo_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+	        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+	        <button type="button" class="btn btn-light" onclick="enviarArchivo()" id="botonEnviar_archivo">Enviar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Registrar Propiedad-->
+	<div class="modal fade" id="modal_RegProp_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Registrar Propiedades</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_RegProp_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			    <button type="button" class="btn btn-light" onclick="registerProperty()">Registrar</button>
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Registrar Fincas Files-->
+	<div class="modal fade" id="modal_uploadArchivos_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Subir Archivo</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_uploadArchivos_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			    <button type="button" class="btn btn-light" id="uploadFileButton" onclick="uploadFile()">Subir archivo</button>
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Crear Evento-->
+	<div class="modal fade" id="modal_crearEvento_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Convocar Evento</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_crearEvento_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			    <button type="button" class="btn btn-light" id="createEventButton" onclick="crearEvento()">Crear</button>
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Contactar Admin-->
+	<div class="modal fade" id="modal_contactAdmin_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Contactar con Administrador</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_contactAdmin_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			    <button type="button" class="btn btn-light" id="createEventButton" onclick="contactAdmin()">Enviar</button>
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Mensaje-->
+	<div class="modal fade" id="modal_msg_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Mensaje</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_msg_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			    <button type="button" class="btn btn-light" id="createEventButton" onclick="marcarLeido()">Marcar como leido</button>
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Evento-->
+	<div class="modal fade" id="modal_info_evento_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Evento</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_info_evento_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			    <button type="button" class="btn btn-light" id="createEventButton" onclick="cancelarEvento()">Cancelar Evento</button>
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Evento User-->
+	<div class="modal fade" id="modal_info_evento_user_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Evento</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_info_evento_user_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			  	<button type="button" class="btn btn-success" id="confirmarAsistenciaButton">Confirmar</button>
+			  	<button type="button" class="btn btn-danger" id="declinarAsistenciaButton">Declinar</button>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Encuestas-->
+	<div class="modal fade" id="modal_encuestas_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Crear Encuesta</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_encuestas_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			    <button type="button" class="btn btn-light" id="createEventButton" onclick="crearEncuesta()">Enviar Encuesta</button>	
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Info Encuestas-->
+	<div class="modal fade" id="modal_info_encuestas_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Encuesta</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_info_encuestas_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Info Encuestas User-->
+	<div class="modal fade" id="modal_info_encuestas_user_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Encuesta</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_info_encuestas_user_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			  	<button type="button" class="btn btn-success" id="votoSiButton">SI</button>
+			  	<button type="button" class="btn btn-danger" id="votoNoButton">NO</button>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>		    
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Difundido-->
+	<div class="modal fade" id="modal_difundido_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Mensaje de Difusión</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_difundido_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			    <button type="button" class="btn btn-light" id="createEventButton" onclick="difundirMensaje()">Enviar Mensaje</button>
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+
+</body>
+</html>
