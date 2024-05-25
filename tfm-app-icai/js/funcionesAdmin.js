@@ -496,6 +496,36 @@ function marcarLeido(){
     });
 }
 
+function eliminarMsg(){
+    var msg = JSON.parse(sessionStorage.getItem('msgActual'));
+    var id = msg.SUGESTION_ID;
+    var finca = JSON.parse(sessionStorage.getItem('fincaActual_object'));
+
+    var dataToSend = {
+        "id": id
+    }
+
+    var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/borrarMsg';
+    $.ajax({
+        url: url,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(dataToSend),
+        success: function(response){
+            cargarMensajesAdmin();
+            console.log("Mensaje eliminado");
+            var modal = new bootstrap.Modal(document.getElementById('modal_msg_id'));
+            modal.hide();
+
+        },
+        error: function(xhr, status, error){
+            console.error(JSON.stringify(error));
+
+        }
+    });
+
+}
+
 function cancelarEvento(){
 
     var evento = JSON.parse(sessionStorage.getItem('evtActual'));
