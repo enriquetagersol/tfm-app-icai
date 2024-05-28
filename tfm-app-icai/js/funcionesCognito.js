@@ -112,7 +112,13 @@ function signIn(){
             });
         },
         onFailure: function (err) {
-            alert(err.message || JSON.stringify(err));
+            console.log(err.message || JSON.stringify(err));
+            //Manejo de alerta
+            document.getElementById("error_login_alert_id").innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>'+"Usuario o contraseña incorrecto";
+            document.getElementById("error_login_alert_id").style.display="inline";
+            setTimeout(function() {
+                document.getElementById("error_login_alert_id").style.display = 'none';
+            }, 5000);
         }
     });
 }
@@ -141,10 +147,18 @@ function continueLoginProcess() {
 			    cargarListadoFincas();
 			};
 
-	    } else {
+	    } else if (is_admin === "No") {
 	    	cargarListadoPropiedades_Users();
+	    } else {
+	    	//Manejo de alerta
+            document.getElementById("error_login_alert_id").innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>'+"Usted no tiene acceso a esta plataforma";
+            document.getElementById("error_login_alert_id").style.display="inline";
+            setTimeout(function() {
+                document.getElementById("error_login_alert_id").style.display = 'none';
+            }, 5000);
+
 	    }
-	    cargarListadoPropiedades_Users();
+	    
     });
 }
 
@@ -324,7 +338,7 @@ function inviteUser(){
     		//------------------------------------
 
     		//GUARDAR USUARIO EN BBDD
-    		
+    		//var url_userToBBDD = 'https://zl4qcuha2h.execute-api.eu-west-3.amazonaws.com/dev';
     		var url_userToBBDD = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/addUserToBBDD';
             $.ajax({
 		        url: url_userToBBDD, 
@@ -424,7 +438,7 @@ function changeTempPass(){
 
             cognitoUser.completeNewPasswordChallenge(new_pass, userAttributes, {
                 onSuccess: function(result) {
-                    
+                    //window.location.href = 'https://miprueba8.s3.eu-west-3.amazonaws.com/index.html';
                      // Obtener los atributos del usuario
                     cognitoUser.getUserAttributes(function(err, attributes) {
                         if (err) {
@@ -436,16 +450,16 @@ function changeTempPass(){
                         const adminAttribute = attributes.find(attr => attr.getName() === 'custom:ADMIN');
                         const adminValue = adminAttribute ? adminAttribute.getValue() : null;
 
-                       
+                        // Determinar la URL de redirección en función del valor del atributo
                         let redirectURL;
                         if (adminValue === 'super') {
                             redirectURL = 'http://tfm-app-icai-admins.s3-website.eu-west-3.amazonaws.com';
                         } else {
-                            
+                            //redirectURL = 'https://miprueba8.s3.eu-west-3.amazonaws.com/index.html';
                             redirectURL = 'http://tfm-app-icai.s3-website.eu-west-3.amazonaws.com';
                         }
 
-                        
+                        // Redirigir a la URL basada en el atributo del usuario
                         window.location.href = redirectURL;
                     });
                 },
@@ -467,9 +481,11 @@ function signOut(){
     if (cognitoUser != null) {
         cognitoUser.signOut();
         
-  
+        // Opcional: Redirigir al usuario después del cierre de sesión
         alert("Sesión cerrada");
-        
+        //window.location.href = 'https://miprueba8.s3.eu-west-3.amazonaws.com/index.html';
         window.location.href = 'http://tfm-app-icai.s3-website.eu-west-3.amazonaws.com'
     }
 }
+
+
