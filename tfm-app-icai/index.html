@@ -110,6 +110,11 @@
 		    </div>
 		    <br>
 		    <button type="button" class="btn btn-secondary" onclick="signIn()">Iniciar sesión</button>
+		    <br>
+		    <div class="w-100">
+		      <div class="alert alert-danger w-100 m-0"  role="alert" style="display: none;" id="error_login_alert_id">
+		      </div>
+	   		</div>
 		</div>
 	</div>
 
@@ -303,7 +308,7 @@
 			  <div>
 			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
 			    <button type="button" class="btn btn-light" id="marcarLeidoButton" onclick="marcarLeido()">Marcar como leido</button>
-			    <button type="button" class="btn btn-danger" id="borrarMsgButton" onclick="eliminarMsg()">Eliminar</button>
+			    <button type="button" class="btn btn-danger" id="borrarMsgButton" onclick="eliminarMsg()" data-bs-dismiss="modal">Eliminar</button>
 			  </div>
 			</div>
 	    </div>
