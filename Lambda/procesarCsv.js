@@ -4,7 +4,7 @@ const s3 = new AWS.S3();
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = async (event) => {
-    // Bucket y la key del archivo subido a S3
+    // Obtenemos el nombre del bucket y la key del archivo subido a S3
     const bucket = event.Records[0].s3.bucket.name;
     const key = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));
     const filename = key.split('/').pop();
@@ -65,8 +65,9 @@ exports.handler = async (event) => {
                     "Estate": estateId,
                     "Num": record.Num,
                     "Piso": record.Piso,
-                    //"Share": record.Share,
-                    "Type": record.Type
+                    "Share": record.Share,
+                    "Type": record.Type,
+                    "IBAN": record.IBAN
 
                 }
             };
