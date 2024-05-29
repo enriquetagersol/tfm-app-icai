@@ -34,7 +34,7 @@ exports.handler = async (event) => {
         const currentDateEpoch = Math.floor(Date.now() / 1000);
 
         // Filtrar encuestas cuya fecha en epoch es posterior a la fecha actual en epoch
-        const futureEncuestas = encuestas.filter(encuesta => encuesta.Fecha > currentDateEpoch);
+        const futureEncuestas = encuestas.filter(encuesta => encuesta.FechaTTL > currentDateEpoch);
         
         //encuestas.forEach(encuesta => {
         futureEncuestas.forEach(encuesta => {
@@ -93,4 +93,5 @@ exports.handler = async (event) => {
         };
     }
 };
+
 
