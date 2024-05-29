@@ -36,7 +36,6 @@ exports.handler = async (event) => {
     const descripcion = body.descripcion_evento;
     //const finca = body.finca_evento;
     
-     // Paso 1: Obtener los userId de la tabla Properties
     const propertiesParams = {
         TableName: 'Properties',
         IndexName: 'Estate',
@@ -54,8 +53,10 @@ exports.handler = async (event) => {
         }
         return acc;
     }, []);
-    //CONTROL
+    
+    //CONTROL----
     console.log(userIds);
+    //-----
 
     // Paso 2: Obtener los emails de la tabla Users
     let emailAddresses = [];
@@ -78,7 +79,11 @@ exports.handler = async (event) => {
     // Eliminar duplicados
     emailAddresses = [...new Set(emailAddresses)];
     subs=[...new Set(subs)];
+    
+    //CONTROL----
     console.log(emailAddresses);
+    //-------
+    
     if (emailAddresses.length === 0) {
         return { statusCode: 404, 
             headers: {
@@ -90,10 +95,13 @@ exports.handler = async (event) => {
         };
     }
     
-    // Paso 3: Almacenar el evento en la tabla
+
     const timestamp = Date.now();
     let event_id = `${timestamp}-${fincaId}`;
+    
+    //CONTROL----
     console.log(event_id);
+    //------
     
     //Creación del evento iCal
     const icalContent = generateICalEvent(start, end, titulo, descripcion);
@@ -102,18 +110,16 @@ exports.handler = async (event) => {
     // Preparar el mapa de invitados y envio de correo con token
     let invitadosMap = {};
     emailAddresses.forEach((email, index) => {
-        // Generar un token único para cada invitado
-        //const token = crypto.randomBytes(20).toString('hex');
+        // Generar un token único para cada invitado (su id de usuario)
+
         const token = subs[index];
-        //const confirmUrl = `https://y7qkoijbq5.execute-api.eu-west-3.amazonaws.com/dev/confirmar?token=${token}&eventoId=${event_id}`;
+
         const confirmUrl = `https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/asistencia/confirmar?token=${token}&eventoId=${event_id}`;
         
-        //const declineUrl = `https://y7qkoijbq5.execute-api.eu-west-3.amazonaws.com/dev/declinar?token=${token}&eventoId=${event_id}`;
         const declineUrl = `https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/asistencia/declinar?token=${token}&eventoId=${event_id}`;
 
         invitadosMap[token] = {
             "asistencia": "Sin confirmar",
-            //"email": email,
             "decline_url": declineUrl,
             "confirm_url": confirmUrl
         }
@@ -179,7 +185,8 @@ exports.handler = async (event) => {
     
     });
     
-    let ttl = convertirFechaAEpoch(end);
+    const start_epoch = convertirFechaAEpoch(start);
+    let end_epoch = convertirFechaAEpoch(end);
     
     let item = {
         TableName: "Events",
@@ -187,11 +194,13 @@ exports.handler = async (event) => {
             "EVENT_ID": event_id, 
             "Descripcion": descripcion,
             "Titulo": titulo,
-            "Start": start,
-            "End": end,
+            //"Start": start,
+            "Start": start_epoch,
+            "End": end_epoch,
             "Finca": fincaId,
             "Invitados": invitadosMap,
-            "TTL": ttl
+            "Cancelado": "No"
+            //"TTL": ttl
         }
     };
     try {
@@ -220,7 +229,6 @@ exports.handler = async (event) => {
             })
         };
     }
-
 };
 
 function generateICalEvent(start, end, summary, description) {
