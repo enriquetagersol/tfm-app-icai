@@ -48,15 +48,28 @@
 
   <br>
 
+   <div class="form-group">
+    <label style="font-weight: bold;">IBAN</label>
+      <input type="text" class="form-control" id="IBAN_id" placeholder="ESXX XXXX XXXX XXXX XXXX XX">
+  </div>
+
+
   <div class="form-group">
-    <label style="font-weight: bold;">Tipo de propiedad</label>
-    <select class="form-control w3-select" id="tipo_id">
-      <option>---</option>
-      <option value="Residencial">Residencial</option>
-      <option value="Local comercial">Local comercial</option>
-      <option value="Oficinas">Oficinas</option>
-      <option value="Parking">Plaza de garaje</option>
-    </select>
+    <label style="font-weight: bold;">Tipo y cuota</label>
+    <div class="row">
+      <div class="col">
+        <select class="form-control w3-select" id="tipo_id">
+          <option>Seleccione tipo de propiedad</option>
+          <option value="Residencial">Residencial</option>
+          <option value="Local comercial">Local comercial</option>
+          <option value="Oficinas">Oficinas</option>
+          <option value="Parking">Plaza de garaje</option>
+        </select>
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" id="share_id" placeholder="%">
+      </div>
+    </div>
   </div>
 
   <br>
