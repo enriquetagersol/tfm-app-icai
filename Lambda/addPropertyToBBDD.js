@@ -4,8 +4,8 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient();
 exports.handler = async (event) => {
     // Establece los encabezados de CORS para la respuesta
     const headers = {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": true, 
+        "Access-Control-Allow-Origin": "*", // Cambia esto por el dominio específico en producción
+        "Access-Control-Allow-Credentials": true, // Si estás manejando sesiones con cookies
         "Content-Type": "application/json"
     };
 
@@ -24,7 +24,7 @@ exports.handler = async (event) => {
         
         const params = {
             TableName: "Properties",
-            IndexName: "Estate", //GSI en DynamoDB
+            IndexName: "Estate", // Asegúrate de que este sea el nombre correcto del GSI en DynamoDB
             KeyConditionExpression: "Estate = :estateId",
             ExpressionAttributeValues: {
                 ":estateId": estateId
@@ -37,13 +37,14 @@ exports.handler = async (event) => {
         let item = {
             TableName: "Properties",
             Item: {
-                "PROPERTY_ID": property_id, 
+                "PROPERTY_ID": property_id, // Asegúrate de que este ID sea único para cada entrada
                 "Description": requestBody.descripcion,
                 "Estate": requestBody.estate,
                 "Num": requestBody.num,
                 "Piso": requestBody.piso,
-                //"Share": requestBody.share,
-                "Type": requestBody.tipo
+                "Share": requestBody.share,
+                "Type": requestBody.tipo,
+                "IBAN": requestBody
             }
         };
 
