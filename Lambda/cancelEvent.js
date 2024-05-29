@@ -28,29 +28,51 @@ exports.handler = async (event) => {
             },
             body: 'Evento no encontrado.' };
         }
-
-        const emails = Object.values(eventItem.Invitados).map(invitado => invitado.email);
+        
+        //const emails = Object.values(eventItem.Invitados).map(invitado => invitado.email);
+        const ids_users = Object.keys(eventItem.Invitados);
+        let emails = await getEmailsForUserIds(ids_users);
+        // Eliminar correos electrónicos duplicados
+        emails = [...new Set(emails)];
+        
+        //CONTROL---
+        console.log(emails);
+        //------
 
         //Enviar email de cancelación
         const sendPromises = emails.map(email => sendCancellationEmail(email, eventItem.Titulo));
 
         await Promise.all(sendPromises);
 
-        //Borrar el evento de la tabla de DynamoDB
-        const deleteParams = {
+        //Actualizar el estado del flag de eventos cancelados
+        /*const deleteParams = {
             TableName: 'Events',
             Key: {
                 'EVENT_ID': eventId
             }
         };
-        await dynamoDB.delete(deleteParams).promise();
+        await dynamoDB.delete(deleteParams).promise();*/
+        const updateParams = {
+            TableName: 'Events',
+            Key: {
+                'EVENT_ID': eventId
+            },
+            UpdateExpression: 'set Cancelado = :cancelStatus',
+            ExpressionAttributeValues: {
+                ':cancelStatus': 'Si'
+            },
+            ReturnValues: 'UPDATED_NEW'
+        };
+        await dynamoDB.update(updateParams).promise();
 
         return { statusCode: 200,
             headers: {
                 "Access-Control-Allow-Origin": "*",
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ message: 'Evento cancelado y borrado con éxito.' })}
+            body: JSON.stringify({ message: 'Evento cancelado con éxito.' })
+        }
+            
     } catch (error) {
         console.error('Error: ', error);
         return { statusCode: 500,
@@ -77,4 +99,23 @@ function sendCancellationEmail(email, eventName) {
     };
 
     return ses.sendEmail(params).promise();
+}
+
+// Función para obtener correos electrónicos de la tabla de usuarios
+async function getEmailsForUserIds(userIds) {
+    const userTable = 'Users'; // Nombre de la tabla de usuarios
+    const emailPromises = userIds.map(async userId => {
+        const params = {
+            TableName: userTable,
+            Key: {
+                'USER_ID': userId
+            }
+        };
+
+        const response = await dynamoDB.get(params).promise();
+        return response.Item ? response.Item.email : null;
+    });
+
+    const emails = await Promise.all(emailPromises);
+    return emails.filter(email => email !== null); // Filtrar valores nulos
 }
