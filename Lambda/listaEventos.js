@@ -25,14 +25,20 @@ exports.handler = async (event) => {
         const result = await dynamoDB.query(paramsEvents).promise();
         const events = result.Items;
 
-        // Filtrar eventos cuya fecha de inicio es posterior a la fecha actual
+        /*Filtrar eventos cuya fecha de inicio es posterior a la fecha actual
         const currentDate = new Date();
         const currentDateString = currentDate.toISOString().replace(/[-:.]/g, '').slice(0, 15); // Formato: YYYYMMDDTHHmmss
 
-        const futureEvents = events.filter(event => event.Start > currentDateString);
+        const futureEvents = events.filter(event => event.Start > currentDateString);*/
+        
+        // Obtener la fecha actual en formato epoch
+        const currentDateEpoch = Math.floor(Date.now() / 1000);
+        // Filtrar eventos
+        const futureEvents = events.filter(event => event.Start > currentDateEpoch);
+        const activeEvents = futureEvents.filter(event => event.Cancelado == "No");
         
         // Añadir los totales de asistencia a cada evento futuro
-        futureEvents.forEach(event => {
+        activeEvents.forEach(event => {
             let totales = {
                 totalInvitados: 0,
                 totalConfirmados: 0,
@@ -59,7 +65,7 @@ exports.handler = async (event) => {
             event.Totales = totales;
         });
 
-        const count = futureEvents.length; // Contar los eventos futuros
+        const count = activeEvents.length; // Contar los eventos futuros no cancelados
 
         // Devolver los eventos futuros y su cantidad
         return {
@@ -70,7 +76,7 @@ exports.handler = async (event) => {
             },
             body: JSON.stringify({
                 count: count,
-                futureEvents: futureEvents
+                futureEvents: activeEvents
             })
         };
     } catch (error) {
