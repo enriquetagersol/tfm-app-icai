@@ -24,9 +24,20 @@ exports.handler = async (event) => {
     try {
         const result = await dynamoDB.query(paramsEvents).promise();
         const encuestas = result.Items;
-        console.log(encuestas);
         
-        encuestas.forEach(encuesta => {
+        //CONTROL-------------
+        console.log(encuestas);
+        //--------------------
+        
+
+        // Obtener la fecha actual en formato epoch
+        const currentDateEpoch = Math.floor(Date.now() / 1000);
+
+        // Filtrar encuestas cuya fecha en epoch es posterior a la fecha actual en epoch
+        const futureEncuestas = encuestas.filter(encuesta => encuesta.Fecha > currentDateEpoch);
+        
+        //encuestas.forEach(encuesta => {
+        futureEncuestas.forEach(encuesta => {
             let totales = {
                 totalEncuestados: 0,
                 totalSi: 0,
@@ -54,9 +65,10 @@ exports.handler = async (event) => {
         });
 
 
-        const count = encuestas.length; 
+        //const count = encuestas.length; 
+        const count = futureEncuestas.length; 
 
-        // Devolver los eventos futuros y su cantidad
+        
         return {
             statusCode: 200,
             headers: {
@@ -65,7 +77,8 @@ exports.handler = async (event) => {
             },
             body: JSON.stringify({
                 count: count,
-                encuestas: encuestas
+                encuestas: futureEncuestas
+                //encuestas: encuestas
             })
         };
     } catch (error) {
@@ -80,3 +93,4 @@ exports.handler = async (event) => {
         };
     }
 };
+
