@@ -1,3 +1,8 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:uploadcsv
+// Region --> eu-west-3 (Paris)
+
+// Esta función recibe un archivo CSV y lo almacena en /csv/propiedades/ en mi bucket de S3
+
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
 
@@ -12,7 +17,7 @@ exports.handler = async (event) => {
         
         const params = {
             Bucket: 'tfm-app-icai',
-            Key: 'csv/' + fileName + '.csv', 
+            Key: 'csv/propiedades/' + fileName + '.csv', 
             Body: csvContent,
             ContentType: 'text/csv; charset=utf-8'
         };
