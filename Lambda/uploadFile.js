@@ -1,3 +1,8 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:uploadFile
+// Region --> eu-west-3 (París)
+
+// Esta función recibe un archivo y lo almacena en mi bucket de S3 en /docs/fileName (fileName es el id de la finca en cada caso)
+
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
 
