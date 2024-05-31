@@ -7,10 +7,10 @@ const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = async (event) => {
-    // Establece los encabezados de CORS para la respuesta
+    
     const headers = {
-        "Access-Control-Allow-Origin": "*", // Cambia esto por el dominio específico en producción
-        "Access-Control-Allow-Credentials": true, // Si estás manejando sesiones con cookies
+        "Access-Control-Allow-Origin": "*", 
+        "Access-Control-Allow-Credentials": true, 
         "Content-Type": "application/json"
     };
 
