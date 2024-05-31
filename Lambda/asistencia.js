@@ -1,3 +1,8 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:asistencia
+// Region --> eu-west-3 (París)
+
+// Esta función actualiza el estado de asistencia de los invitados al evento
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
