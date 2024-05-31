@@ -1,7 +1,7 @@
 // ARN --> arn:aws:lambda:eu-west-3:699928454448:function:votar
 // Region --> eu-west-3 (París)
 
-//Esta función actualiza el voto de los encuestados
+// Esta función actualiza el voto de los encuestados
 
 
 
