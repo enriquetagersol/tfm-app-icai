@@ -1,3 +1,8 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:marcarLeido
+// Region --> eu-west-3 (Paris)
+
+// Esta función actualiza el atributo "Estado" de un registro de la tabla "Sugerencias" de DynamoDB
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
