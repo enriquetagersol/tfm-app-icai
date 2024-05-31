@@ -1,3 +1,10 @@
+//ARN --> arn:aws:lambda:eu-west-3:699928454448:function:difundirMensaje
+//Region --> eu-west-3 (París)
+
+//Esta función envía un mensaje de correo electrónico a los propietarios y/o inquilinos de una finca
+
+
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 const ses = new AWS.SES();
