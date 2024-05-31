@@ -1,3 +1,9 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:listaMsgAdmin
+// Region --> eu-west-3 (París)
+
+// Esta función recupera los mensajes dirigidos a un administrador de la tabla "Sugerencias" en DynamoDB
+
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
@@ -24,6 +30,7 @@ exports.handler = async (event) => {
     try {
         const result = await dynamoDB.query(paramsMsg).promise();
         let msgs = result.Items;
+        msgs = msgs.filter(msg => msg.Estado != "Eliminado");
 
         // Ordenar los mensajes por estado y fecha
         msgs.sort((a, b) => {
@@ -80,3 +87,4 @@ exports.handler = async (event) => {
         };
     }
 };
+
