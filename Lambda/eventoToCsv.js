@@ -5,7 +5,7 @@
 // Busca evento en tabla "Events"
 // Busca la información de cada invitado en la tabla "Users"
 // Transforma la información del evento a CSV donde cada fila corresponde a un invitado
-// Almacena el CSV en S3 en /csv/resultadoEventos de mi bucket
+// Almacena el CSV en S3 en /csv/resultadoEventos/finca_id de mi bucket (finca_id es el id de la finca en cada caso)
 // Devuelve URL del archivo en S3 para su descarga
 
 
