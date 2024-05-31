@@ -1,11 +1,16 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:registrarEmpresa
+// Region --> eu-west-3 (Paris)
+
+// Esta función crea un nuevo registro en la tabla "Admins" de DynamoDB
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = async (event) => {
     // Establece los encabezados de CORS para la respuesta
     const headers = {
-        "Access-Control-Allow-Origin": "*", 
-        "Access-Control-Allow-Credentials": true,
+        "Access-Control-Allow-Origin": "*", // Cambia esto por el dominio específico en producción
+        "Access-Control-Allow-Credentials": true, // Si estás manejando sesiones con cookies
         "Content-Type": "application/json"
     };
 
