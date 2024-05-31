@@ -1,8 +1,8 @@
-# ARN --> arn:aws:lambda:eu-west-3:699928454448:function:cancel_event
-# Region --> eu-west-3 (París)
+//ARN --> arn:aws:lambda:eu-west-3:699928454448:function:cancel_event
+//Region --> eu-west-3 (París)
 
-# Esta función se emplea para cancelar eventos
-# Modifica el atributo 'Cancelado' en la tabla de Dynamo
+//Esta función se emplea para cancelar eventos
+//Modifica el atributo 'Cancelado' en la tabla de Dynamo
 
 
 const AWS = require('aws-sdk');
