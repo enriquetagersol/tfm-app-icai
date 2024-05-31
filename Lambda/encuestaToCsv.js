@@ -5,7 +5,7 @@
 // Recupera la información de una encuesta de tabla "Encuestas"
 // Recupera la información de los encuestados de tabla "Users"
 // Transforma la información en CSV donde cada fila corresponde a un encuestado
-// Almacena el CSV en la carpeta /csv/resultadoEncuestas/finca_id/ de mi bucket de S3
+// Almacena el CSV en la carpeta /csv/resultadoEncuestas/finca_id/ de mi bucket de S3 (finca_id es el id de la finca en cada caso)
 // Devuelve la URL del archivo en S3 para descargar
 
 
