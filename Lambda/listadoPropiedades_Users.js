@@ -1,3 +1,9 @@
+//ARN --> arn:aws:lambda:eu-west-3:699928454448:function:listadoPropiedades_Users
+// Region --> eu-west-3 (París)
+
+// Recupera las propiedades de las que un usuario es propietario o inquilino y la información del administrador de las fincas a las que pertenecen las propiedades
+
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
@@ -6,8 +12,8 @@ exports.handler = async (event) => {
     const userId = requestBody.user_id;
 
     try {
-       
-        
+
+        //Recuperar propiedades de las que el usuario es propietario o inquilino
         const propertiesParams = {
             TableName: 'Properties'
         };
@@ -26,14 +32,16 @@ exports.handler = async (event) => {
                     (property.Inquilinos && property.Inquilinos.includes(userId))
                 );
             } else {
-                
+                // Si Propietarios e Inquilinos están vacíos o no son arrays, retornar false
                 return false;
             }
         });
         
 
+        //--------------
         console.log(properties);
-
+        //--------------
+        
         const propertiesWithAdminEmails = await Promise.all(properties.map(async (property) => {
             if (property.Estate) {
                 const estateParams = {
@@ -76,7 +84,11 @@ exports.handler = async (event) => {
             
             return property;
         }));
-    console.log(propertiesWithAdminEmails);
+        
+        //----------------
+        console.log(propertiesWithAdminEmails);
+        //--------------
+        
         return {
             statusCode: 200,
             headers: {
