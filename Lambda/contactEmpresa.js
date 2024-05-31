@@ -1,3 +1,8 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:contactEmpresa
+// Region --> eu-west-3 (Paris)
+
+// Esta función envía un email a la dirección de contacto de la empresa administradora (tabla "Admins" en DynamoDB)
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 const ses = new AWS.SES();
@@ -96,3 +101,4 @@ exports.handler = async (event) => {
     }
   
 };
+
