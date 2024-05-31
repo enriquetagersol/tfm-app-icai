@@ -1,3 +1,11 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:listaEventos
+// Region --> eu-west-3 (París)
+
+// Esta función recupera los eventos futuros y activos de la tabla "Events" para una finca
+// Recupera eventos asociados a una finca
+// Filtra por aquellos que no han empezado (start > current date)
+// Filtra por aquellos que no han sido cancelados
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
@@ -24,12 +32,6 @@ exports.handler = async (event) => {
     try {
         const result = await dynamoDB.query(paramsEvents).promise();
         const events = result.Items;
-
-        /*Filtrar eventos cuya fecha de inicio es posterior a la fecha actual
-        const currentDate = new Date();
-        const currentDateString = currentDate.toISOString().replace(/[-:.]/g, '').slice(0, 15); // Formato: YYYYMMDDTHHmmss
-
-        const futureEvents = events.filter(event => event.Start > currentDateString);*/
         
         // Obtener la fecha actual en formato epoch
         const currentDateEpoch = Math.floor(Date.now() / 1000);
