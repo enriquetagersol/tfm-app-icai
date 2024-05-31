@@ -1,3 +1,10 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:procesarCsv
+// Region --> eu-west-3 (París)
+
+// Esta función se dispara cuando se detecta que un nuevo archivo ha sido subido a la carpeta /csv/propiedades de mi bucket de S3
+// Procesa la información y la almacena en una tabla de DynamoDB
+
+
 const AWS = require('aws-sdk');
 const parse = require('csv-parse').parse;
 const s3 = new AWS.S3();
