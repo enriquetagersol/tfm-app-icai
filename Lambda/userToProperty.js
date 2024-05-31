@@ -1,3 +1,8 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:userToProperty
+// Region --> eu-west-3 (París)
+
+// Esta función vincula un usuario a una propiedad como propietario o inquilinio
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
@@ -43,12 +48,7 @@ exports.handler = async (event) => {
         // Obtener datos actuales para ver si el mapa ya existe
         const getResult = await dynamoDB.get(getParams).promise();
         
-        /*let currentUsers = getResult.Item && getResult.Item[at] ? getResult.Item[at] : {};
-        
-        // Añadir o actualizar usuario en el mapa
-        currentUsers[user_id] = {
-            "email": email,
-        };*/
+
         let currentUsers = getResult.Item && getResult.Item[at] ? getResult.Item[at] : [];
 
         // Añadir el user_id a la lista
