@@ -1,3 +1,10 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:newEvent
+// Region --> eu-west-3 (París)
+
+// Esta función convoca un nuevo evento para una finca
+// Crea un nuevo registro en la tabla "Events"
+// Envía un email a propietarios e inquilinos de la finca con iCal adjunto y enlace para confirmar asistencia
+
 const AWS = require('aws-sdk');
 const ses = new AWS.SES();
 const dynamodb = new AWS.DynamoDB.DocumentClient();
@@ -113,15 +120,17 @@ exports.handler = async (event) => {
         // Generar un token único para cada invitado (su id de usuario)
 
         const token = subs[index];
+        const url = `https://tfm-app-icai.s3.eu-west-3.amazonaws.com/asistencia.html?token=${token}&eventoId=${event_id}`;
 
-        const confirmUrl = `https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/asistencia/confirmar?token=${token}&eventoId=${event_id}`;
+        //const confirmUrl = `https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/asistencia/confirmar?token=${token}&eventoId=${event_id}`;
         
-        const declineUrl = `https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/asistencia/declinar?token=${token}&eventoId=${event_id}`;
+        //const declineUrl = `https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/asistencia/declinar?token=${token}&eventoId=${event_id}`;
 
         invitadosMap[token] = {
             "asistencia": "Sin confirmar",
-            "decline_url": declineUrl,
-            "confirm_url": confirmUrl
+            "comentario": ""
+            //"decline_url": declineUrl,
+            //"confirm_url": confirmUrl
         }
         
         let boundary = "NextPart";
@@ -143,10 +152,13 @@ exports.handler = async (event) => {
         rawEmailMessage += `<h3>${titulo}</h3>\r\n`;
         rawEmailMessage += `<p>${descripcion}</p>\r\n`;
         rawEmailMessage +=  `<p>
+                    <a href="${url}">Confirmar/Declinar Asistencia</a>
+                </p>\r\n`;
+        /*rawEmailMessage +=  `<p>
                     <a href="${confirmUrl}">Confirmar Asistencia</a>
                     |
                     <a href="${declineUrl}">Declinar Asistencia</a>
-                </p>\r\n`;
+                </p>\r\n`;*/
         rawEmailMessage += "</body>\r\n</html>\r\n";
         rawEmailMessage += "\r\n";
         
