@@ -1,3 +1,8 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:addPropertytoBBDD
+// Region --> eu-west-3 (París)
+
+// Esta función crea un nuevo registro en la tabla "Properties"
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
@@ -24,7 +29,7 @@ exports.handler = async (event) => {
         
         const params = {
             TableName: "Properties",
-            IndexName: "Estate", // Asegúrate de que este sea el nombre correcto del GSI en DynamoDB
+            IndexName: "Estate", 
             KeyConditionExpression: "Estate = :estateId",
             ExpressionAttributeValues: {
                 ":estateId": estateId
@@ -37,7 +42,7 @@ exports.handler = async (event) => {
         let item = {
             TableName: "Properties",
             Item: {
-                "PROPERTY_ID": property_id, // Asegúrate de que este ID sea único para cada entrada
+                "PROPERTY_ID": property_id, 
                 "Description": requestBody.descripcion,
                 "Estate": requestBody.estate,
                 "Num": requestBody.num,
