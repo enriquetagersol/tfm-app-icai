@@ -1,3 +1,9 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:crearEncuesta
+// Region --> eu-west-3 (Paris)
+
+// Esta función crea un nuevo registro en la tabla "Encuestas"
+// Envía un email a los encuestados con un enlace para responder
+
 const AWS = require('aws-sdk');
 const ses = new AWS.SES();
 const dynamodb = new AWS.DynamoDB.DocumentClient();
@@ -27,9 +33,8 @@ exports.handler = async (event) => {
   const creationDateDynamo=Math.floor(creationDate.getTime()/1000);
   const ttl= Math.floor((creationDate.getTime() / 1000) + (7 * 24 * 60 * 60));
   
-  // Paso 1: Obtener los userId de la tabla Properties
-  
-    //---------------
+
+    //Paso 1: Recuperar inquilinos y propietarios
     const propertiesParams = {
         TableName: 'Properties',
         IndexName: 'Estate',
@@ -47,10 +52,12 @@ exports.handler = async (event) => {
         }
         return acc;
     }, []);
+  
     //---------------
     console.log(userIds);
+    //----------------
     
-    // Paso 2: Obtener los emails de la tabla Users
+    // Paso 2: Obtener los emails y USER_IDs (subs) de la tabla Users
     let emailAddresses = [];
     let subs = [];
     for (const userId of userIds) {
@@ -71,8 +78,12 @@ exports.handler = async (event) => {
     // Eliminar duplicados
     emailAddresses = [...new Set(emailAddresses)];
     subs=[...new Set(subs)];
+
+    //------------------
     console.log(emailAddresses);
     console.log(subs);
+    //------------------
+  
     if (emailAddresses.length === 0) {
         return { statusCode: 404, 
             headers: {
@@ -84,46 +95,27 @@ exports.handler = async (event) => {
         };
     }
     
-    // Paso 3: Almacenar el evento en la tabla
-    /*const paramsQuery = {
-        TableName: "Encuestas",
-        IndexName: "Finca", //GSI en DynamoDB
-        KeyConditionExpression: "Finca = :Finca",
-        ExpressionAttributeValues: {
-            ":Finca": finca_id
-        }
-    };
-    const data = await dynamodb.query(paramsQuery).promise();
-    var n = data.Count + 1;
-    var encuesta_id = n.toString() + '-' + finca_id;*/
+    // Paso 3: Almacenar el evento en la tabla y enviar correos
     const timestamp = Date.now();
     let encuesta_id = `${timestamp}-${finca_id}`;
+    //-----------------
     console.log(encuesta_id);
+    //------------------
     
     // Preparar el mapa de invitados 
     let encuestadosMap = {};
     
     emailAddresses.forEach((email, index) => {
-        // Generar un token único para cada invitado
-        // const token = crypto.randomBytes(20).toString('hex');
         
         const token = subs[index];
+        const url = `https://tfm-app-icai.s3.eu-west-3.amazonaws.com/votar.html?token=${token}&encuestaId=${encuesta_id}`;
         
-        
-        const voteYesUrl = `https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/votacion/votar_si?token=${token}&encuestaId=${encuesta_id}`;
-        
-        
-        const voteNoUrl = `https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/votacion/votar_no?token=${token}&encuestaId=${encuesta_id}`;
         
         encuestadosMap[token] = {
             "voto": "NSNC",
-            //"email": email,
-            "url_si": voteYesUrl,
-            "url_no": voteNoUrl
+            "comentario": ""
         }
-
-        
-        
+      
         let boundary = "NextPart";
     
        // Encabezados del mensaje
@@ -143,9 +135,7 @@ exports.handler = async (event) => {
         rawEmailMessage += `<h3>${motivo}</h3>\r\n`;
         rawEmailMessage += `<p>${descripcion}</p>\r\n`;
         rawEmailMessage +=  `<p>
-                    <a href="${voteYesUrl}">Voto a favor</a>
-                    |
-                    <a href="${voteNoUrl}">Voto en contra</a>
+                    <a href="${url}">Votar</a>
                 </p>\r\n`;
         rawEmailMessage += "</body>\r\n</html>\r\n";
         rawEmailMessage += "\r\n";
@@ -170,7 +160,6 @@ exports.handler = async (event) => {
             },
             body: JSON.stringify(error) };
         }
-    //------------
     
     });
     let item = {
