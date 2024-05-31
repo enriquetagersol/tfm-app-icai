@@ -1,3 +1,8 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:addUserToBBDD
+// Region --> eu-west-3 (París)
+
+// Almacena en la tabla "Users" el nuevo usuario creado en Cognito
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
