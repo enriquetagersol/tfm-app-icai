@@ -1,3 +1,9 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:listadoFincas
+// Region --> eu-west-3 (París)
+
+// Esta función recupera registros de la tabla "Estates" filtrando por id del administrador
+// Recupera las fincas gestionadas por un administrador
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
@@ -39,3 +45,4 @@ exports.handler = async (event) => {
         };
     }
 };
+
