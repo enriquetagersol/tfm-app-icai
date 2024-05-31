@@ -1,3 +1,8 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:listadoPropiedades
+// Region --> eu-west-3 (París)
+
+// Esta función recupera las propiedades pertenecientes a una finca de la tabla "Properties" de DynamoDB
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
@@ -23,7 +28,7 @@ exports.handler = async (event) => {
     try {
         const propertiesData = await dynamoDB.query(paramsProperties).promise();
         const properties = propertiesData.Items;
-
+       
             return {
                 statusCode: 200,
                 headers: {
