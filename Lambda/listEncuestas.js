@@ -1,3 +1,11 @@
+// ARN --> arn:aws:lambda:eu-west-3:699928454448:function:listEncuestas
+// Region --> eu-west-3 (Paris)
+
+// Esta función recupera las encuestas activas de la tabla "Encuestas" para una finca
+// Recupera encuestas asociadas a una finca
+// Filtra por aquellas en las que TTL > current_date
+
+
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
@@ -36,7 +44,7 @@ exports.handler = async (event) => {
         // Filtrar encuestas cuya fecha en epoch es posterior a la fecha actual en epoch
         const futureEncuestas = encuestas.filter(encuesta => encuesta.FechaTTL > currentDateEpoch);
         
-        //encuestas.forEach(encuesta => {
+  
         futureEncuestas.forEach(encuesta => {
             let totales = {
                 totalEncuestados: 0,
@@ -65,7 +73,7 @@ exports.handler = async (event) => {
         });
 
 
-        //const count = encuestas.length; 
+       
         const count = futureEncuestas.length; 
 
         
@@ -78,7 +86,7 @@ exports.handler = async (event) => {
             body: JSON.stringify({
                 count: count,
                 encuestas: futureEncuestas
-                //encuestas: encuestas
+                
             })
         };
     } catch (error) {
