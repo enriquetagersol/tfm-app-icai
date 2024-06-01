@@ -33,8 +33,8 @@ exports.handler = async (event) => {
   const creationDateDynamo=Math.floor(creationDate.getTime()/1000);
   const ttl= Math.floor((creationDate.getTime() / 1000) + (7 * 24 * 60 * 60));
   
+  // Paso 1: Recuperar inquilinos y propietarios
 
-    //Paso 1: Recuperar inquilinos y propietarios
     const propertiesParams = {
         TableName: 'Properties',
         IndexName: 'Estate',
@@ -52,10 +52,10 @@ exports.handler = async (event) => {
         }
         return acc;
     }, []);
-  
+    
     //---------------
     console.log(userIds);
-    //----------------
+    //-----------------
     
     // Paso 2: Obtener los emails y USER_IDs (subs) de la tabla Users
     let emailAddresses = [];
@@ -78,12 +78,8 @@ exports.handler = async (event) => {
     // Eliminar duplicados
     emailAddresses = [...new Set(emailAddresses)];
     subs=[...new Set(subs)];
-
-    //------------------
     console.log(emailAddresses);
     console.log(subs);
-    //------------------
-  
     if (emailAddresses.length === 0) {
         return { statusCode: 404, 
             headers: {
@@ -98,27 +94,25 @@ exports.handler = async (event) => {
     // Paso 3: Almacenar el evento en la tabla y enviar correos
     const timestamp = Date.now();
     let encuesta_id = `${timestamp}-${finca_id}`;
-    //-----------------
     console.log(encuesta_id);
-    //------------------
     
     // Preparar el mapa de invitados 
     let encuestadosMap = {};
     
     emailAddresses.forEach((email, index) => {
-        
+
         const token = subs[index];
         const url = `https://tfm-app-icai.s3.eu-west-3.amazonaws.com/votar.html?token=${token}&encuestaId=${encuesta_id}`;
-        
         
         encuestadosMap[token] = {
             "voto": "NSNC",
             "comentario": ""
+
         }
-      
+        
         let boundary = "NextPart";
-    
-       // Encabezados del mensaje
+
+        // Encabezados del mensaje
         let rawEmailMessage = `From: gestionfincas.tfm@gmail.com\r\n`;
         rawEmailMessage += `To: ${email}\r\n`;
         rawEmailMessage += "Subject: Encuesta\r\n";
@@ -131,13 +125,80 @@ exports.handler = async (event) => {
         rawEmailMessage += "Content-Type: text/html; charset=UTF-8\r\n";
         rawEmailMessage += "Content-Transfer-Encoding: 7bit\r\n";
         rawEmailMessage += "\r\n";
-        rawEmailMessage += "<html>\r\n<body>\r\n";
-        rawEmailMessage += `<h3>${motivo}</h3>\r\n`;
-        rawEmailMessage += `<p>${descripcion}</p>\r\n`;
-        rawEmailMessage +=  `<p>
-                    <a href="${url}">Votar</a>
-                </p>\r\n`;
-        rawEmailMessage += "</body>\r\n</html>\r\n";
+        rawEmailMessage += `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    margin: 0;
+                    padding: 0;
+                }
+                .container {
+                    width: 100%;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                    background-color: #295E7E;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                    border-top-left-radius: 10px;
+                    border-top-right-radius: 10px;
+                }
+                .content {
+                    padding: 20px;
+                    text-align: center;
+                }
+                .footer {
+                    background-color: #295E7E;
+                    color: white;
+                    text-align: center;
+                    padding: 10px;
+                    border-bottom-left-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                }
+                .button {
+                    background-color: #295E7E;
+                    color: white;
+                    padding: 10px 20px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    border-radius: 5px;
+                    margin-top: 20px;
+                }
+                .button:hover {
+                    background-color: #1558b3;
+                }
+                .content p {
+                    margin: 10px 0;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>${motivo}</h1>
+                </div>
+                <div class="content">
+                    <p>${descripcion}</p>
+                    <p><a href="${url}" class="button">Votar</a></p>
+                </div>
+                <div class="footer">
+                    <p>© 2024 tfm-app-icai.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        `;
         rawEmailMessage += "\r\n";
         
         // Configurar los parámetros para el método sendRawEmail
@@ -160,6 +221,7 @@ exports.handler = async (event) => {
             },
             body: JSON.stringify(error) };
         }
+    //------------
     
     });
     let item = {
