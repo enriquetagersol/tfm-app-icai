@@ -32,6 +32,7 @@ exports.handler = async (event) => {
   const creationDate=new Date();
   const creationDateDynamo=Math.floor(creationDate.getTime()/1000);
   const ttl= Math.floor((creationDate.getTime() / 1000) + (7 * 24 * 60 * 60));
+  const ttl_legible = convertEpochToReadableDate(ttl);
   
   // Paso 1: Recuperar inquilinos y propietarios
 
@@ -109,6 +110,7 @@ exports.handler = async (event) => {
             "comentario": ""
 
         }
+
         
         let boundary = "NextPart";
 
@@ -155,7 +157,6 @@ exports.handler = async (event) => {
                 }
                 .content {
                     padding: 20px;
-                    text-align: center;
                 }
                 .footer {
                     background-color: #295E7E;
@@ -186,10 +187,14 @@ exports.handler = async (event) => {
         <body>
             <div class="container">
                 <div class="header">
-                    <h1>${motivo}</h1>
+                    <h1>Nueva Encuesta</h1>
                 </div>
                 <div class="content">
-                    <p>${descripcion}</p>
+                    <p><strong>Motivo:</strong> ${motivo}</p>
+                    <p><strong>Descripcion:</strong> ${descripcion}</p>
+                    <br>
+                    <p><strong>Activa hasta:</strong> ${ttl_legible}</p>
+                    <br>
                     <p><a href="${url}" class="button">Votar</a></p>
                 </div>
                 <div class="footer">
@@ -273,3 +278,8 @@ const getCurrentFormattedDate = () => {
   
     return `${year}${month}${day}T${hours}${minutes}`;
 };
+
+function convertEpochToReadableDate(epoch) {
+    const date = new Date(epoch * 1000); // Convertir de segundos a milisegundos
+    return date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0];
+}
