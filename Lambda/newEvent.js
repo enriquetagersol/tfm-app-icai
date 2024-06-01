@@ -114,6 +114,16 @@ exports.handler = async (event) => {
     const icalContent = generateICalEvent(start, end, titulo, descripcion);
     const encodedICalContent = Buffer.from(icalContent).toString('base64');
     
+    //Fechas a epoch
+    const start_epoch = convertirFechaAEpoch(start);
+    const end_epoch = convertirFechaAEpoch(end);
+    
+    //Fechas legibles
+    const start_legible = convertEpochToReadableDate(start_epoch);
+    const end_legible = convertEpochToReadableDate(end_epoch);
+    
+
+    
     // Preparar el mapa de invitados y envio de correo con token
     let invitadosMap = {};
     emailAddresses.forEach((email, index) => {
@@ -172,7 +182,6 @@ exports.handler = async (event) => {
                 }
                 .content {
                     padding: 20px;
-                    text-align: center;
                 }
                 .footer {
                     background-color: #295E7E;
@@ -203,10 +212,15 @@ exports.handler = async (event) => {
         <body>
             <div class="container">
                 <div class="header">
-                    <h1>${titulo}</h1>
+                    <h1>Nuevo Evento</h1>
                 </div>
                 <div class="content">
-                    <p>${descripcion}</p>
+                    <p><strong>Asunto:</strong> ${titulo}</p>
+                    <p><strong>Descripcion:</strong> ${descripcion}</p>
+                    <br>
+                    <p><strong>Inicio:</strong> ${start_legible}</p>
+                    <p><strong>Fin:</strong> ${end_legible}</p>
+                    <br>
                     <p><a href="${url}" class="button">Confirmar/Declinar Asistencia</a></p>
                 </div>
                 <div class="footer">
@@ -253,8 +267,7 @@ exports.handler = async (event) => {
     
     });
     
-    const start_epoch = convertirFechaAEpoch(start);
-    let end_epoch = convertirFechaAEpoch(end);
+
     
     let item = {
         TableName: "Events",
@@ -330,5 +343,11 @@ function convertirFechaAEpoch(fechaStr) {
 
     return epoch;
 }
+
+function convertEpochToReadableDate(epoch) {
+    const date = new Date(epoch * 1000); // Convertir de segundos a milisegundos
+    return date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0];
+}
+
 
 
