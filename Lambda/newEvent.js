@@ -122,20 +122,14 @@ exports.handler = async (event) => {
         const token = subs[index];
         const url = `https://tfm-app-icai.s3.eu-west-3.amazonaws.com/asistencia.html?token=${token}&eventoId=${event_id}`;
 
-        //const confirmUrl = `https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/asistencia/confirmar?token=${token}&eventoId=${event_id}`;
-        
-        //const declineUrl = `https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/asistencia/declinar?token=${token}&eventoId=${event_id}`;
-
         invitadosMap[token] = {
             "asistencia": "Sin confirmar",
             "comentario": ""
-            //"decline_url": declineUrl,
-            //"confirm_url": confirmUrl
         }
         
         let boundary = "NextPart";
-    
-       // Encabezados del mensaje
+
+        // Encabezados del mensaje
         let rawEmailMessage = `From: gestionfincas.tfm@gmail.com\r\n`;
         rawEmailMessage += `To: ${email}\r\n`;
         rawEmailMessage += "Subject: Nuevo Evento\r\n";
@@ -148,18 +142,80 @@ exports.handler = async (event) => {
         rawEmailMessage += "Content-Type: text/html; charset=UTF-8\r\n";
         rawEmailMessage += "Content-Transfer-Encoding: 7bit\r\n";
         rawEmailMessage += "\r\n";
-        rawEmailMessage += "<html>\r\n<body>\r\n";
-        rawEmailMessage += `<h3>${titulo}</h3>\r\n`;
-        rawEmailMessage += `<p>${descripcion}</p>\r\n`;
-        rawEmailMessage +=  `<p>
-                    <a href="${url}">Confirmar/Declinar Asistencia</a>
-                </p>\r\n`;
-        /*rawEmailMessage +=  `<p>
-                    <a href="${confirmUrl}">Confirmar Asistencia</a>
-                    |
-                    <a href="${declineUrl}">Declinar Asistencia</a>
-                </p>\r\n`;*/
-        rawEmailMessage += "</body>\r\n</html>\r\n";
+        rawEmailMessage += `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    margin: 0;
+                    padding: 0;
+                }
+                .container {
+                    width: 100%;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                    background-color: #295E7E;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                    border-top-left-radius: 10px;
+                    border-top-right-radius: 10px;
+                }
+                .content {
+                    padding: 20px;
+                    text-align: center;
+                }
+                .footer {
+                    background-color: #295E7E;
+                    color: white;
+                    text-align: center;
+                    padding: 10px;
+                    border-bottom-left-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                }
+                .button {
+                    background-color: #295E7E;
+                    color: white;
+                    padding: 10px 20px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    border-radius: 5px;
+                    margin-top: 20px;
+                }
+                .button:hover {
+                    background-color: #1558b3;
+                }
+                .content p {
+                    margin: 10px 0;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>${titulo}</h1>
+                </div>
+                <div class="content">
+                    <p>${descripcion}</p>
+                    <p><a href="${url}" class="button">Confirmar/Declinar Asistencia</a></p>
+                </div>
+                <div class="footer">
+                    <p>© 2024 tff-app-icai.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        `;
         rawEmailMessage += "\r\n";
         
         // Archivo iCal adjunto
@@ -171,7 +227,7 @@ exports.handler = async (event) => {
         rawEmailMessage += `${encodedICalContent}\r\n`;
         rawEmailMessage += "\r\n";
         rawEmailMessage += `--${boundary}--\r\n`;
-    
+            
     
         // Configurar los parámetros para sendRawEmail
         const params = {
@@ -206,13 +262,11 @@ exports.handler = async (event) => {
             "EVENT_ID": event_id, 
             "Descripcion": descripcion,
             "Titulo": titulo,
-            //"Start": start,
             "Start": start_epoch,
             "End": end_epoch,
             "Finca": fincaId,
             "Invitados": invitadosMap,
             "Cancelado": "No"
-            //"TTL": ttl
         }
     };
     try {
@@ -276,4 +330,5 @@ function convertirFechaAEpoch(fechaStr) {
 
     return epoch;
 }
+
 
