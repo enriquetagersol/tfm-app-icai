@@ -31,7 +31,7 @@ exports.handler = async (event) => {
     const mensaje = body.mensaje;
     const destinatarios = body.destinatarios;
     console.log(destinatarios);
-    console.log(estateId);
+
     try {
         // Paso 1: Consultar en la tabla Properties los registros con el Estate_Id dado
         const propertiesParams = {
@@ -63,7 +63,7 @@ exports.handler = async (event) => {
             }, []);
 
             console.log(userList); 
-        }else{
+        }else if (destinatarios == 'Todos'){
             userList = propertiesResult.Items.reduce((acc, property) => {
                 if (property.Inquilinos && Array.isArray(property.Inquilinos) && property.Inquilinos.length > 0) {
                     acc.push(...property.Inquilinos);
@@ -95,7 +95,11 @@ exports.handler = async (event) => {
         }
         // Eliminar duplicados
         emailAddresses = [...new Set(emailAddresses)];
+        
+        //CONTROL-------
         console.log(emailAddresses);
+        //-----------
+        
         if (emailAddresses.length === 0) {
             return {
                 statusCode: 404,
@@ -110,26 +114,86 @@ exports.handler = async (event) => {
 
         // Envío de correos electrónicos
         emailAddresses.forEach(async email => {
+
+            
             let boundary = "NextPart";
 
             // Encabezados del mensaje
             let rawEmailMessage = `From: gestionfincas.tfm@gmail.com\r\n`;
             rawEmailMessage += `To: ${email}\r\n`;
-            rawEmailMessage += `Subject: ${asunto}\r\n`;
+            rawEmailMessage += "Subject: Notificación de mensaje\r\n";
             rawEmailMessage += "MIME-Version: 1.0\r\n";
             rawEmailMessage += `Content-Type: multipart/mixed; boundary="${boundary}"\r\n`;
             rawEmailMessage += "\r\n";
-
+            
             // Cuerpo del mensaje en HTML
             rawEmailMessage += `--${boundary}\r\n`;
             rawEmailMessage += "Content-Type: text/html; charset=UTF-8\r\n";
             rawEmailMessage += "Content-Transfer-Encoding: 7bit\r\n";
             rawEmailMessage += "\r\n";
-            rawEmailMessage += "<html>\r\n<body>\r\n";
-            rawEmailMessage += `<h3>${asunto}</h3>\r\n`;
-            rawEmailMessage += `<p>${mensaje}</p>\r\n`;
-            rawEmailMessage += "</body>\r\n</html>\r\n";
+            rawEmailMessage += `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f4f4f4;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .container {
+                        width: 100%;
+                        max-width: 600px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        background-color: #ffffff;
+                        border-radius: 10px;
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    }
+                    .header {
+                        background-color: #295E7E;
+                        color: white;
+                        padding: 20px;
+                        text-align: center;
+                        border-top-left-radius: 10px;
+                        border-top-right-radius: 10px;
+                    }
+                    .content {
+                        padding: 20px;
+                    }
+                    .footer {
+                        background-color: #295E7E;
+                        color: white;
+                        text-align: center;
+                        padding: 10px;
+                        border-bottom-left-radius: 10px;
+                        border-bottom-right-radius: 10px;
+                    }
+                    .content p {
+                        margin: 10px 0;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>Notificación de mensaje</h1>
+                    </div>
+                    <div class="content">
+                        <p><strong>Asunto:</strong> ${asunto}</p>
+                        <p><strong>Mensaje:</strong> ${mensaje}</p>
+                    <br>
+                    </div>
+                    <div class="footer">
+                        <p>© 2024 tfm-app-icai.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            `;
             rawEmailMessage += "\r\n";
+            
 
             // Configurar los parámetros para sendRawEmail
             const params = {
