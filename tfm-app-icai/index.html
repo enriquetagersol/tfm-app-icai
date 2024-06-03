@@ -1,3 +1,7 @@
+<!-- Página de inicio para los usuarios (administrador o vecino-->
+<!-- Es una SPA por lo que en el div contenido-ajax se van cargando los contenidos dinámicamente-->
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,37 +33,35 @@
 
     <style>
 
-		.navbar {
-		    width: 100%; 
-		    display: flex; 
-		    justify-content: center; 
-		    background-color: #295E7E;
-		}	
+	.navbar {
+	   width: 100%; 
+	   display: flex; 
+	   justify-content: center; 
+           background-color: #295E7E;
+	}	
         #contenido-ajax {
             width: 60%; 
-		    max-height: 87vh; 
-		    height: auto; 
-		    margin: 30px auto; 
-		    background-color: white;
-		    padding: 20px;
-		    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-		    border-radius: 10px;
-		    overflow: auto; 
-		    display: flex;
-		    flex-direction: column; 
-		    justify-content: flex-start;      
+	    max-height: 87vh; 
+	    height: auto; 
+	    margin: 30px auto; 
+	    background-color: white;
+	    padding: 20px;
+	    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+	    border-radius: 10px;
+	    overflow: auto; 
+	    display: flex;
+	    flex-direction: column; 
+	    justify-content: flex-start;      
         }
         #formulario-login {
             width: 80%; 
             padding: 20px; 
             margin-left: auto;
-			margin-right: auto;
+	    margin-right: auto;
             display: flex; 
-		    flex-direction: column; 
-		    justify-content: center; 
-		}
-
-
+	    flex-direction: column; 
+	    justify-content: center; 
+	}	
 
     </style>
 
@@ -99,7 +101,7 @@
 
 	<div id="contenido-ajax">
 		<div id="formulario-login">
-			<div>
+		   <div>
 		      <label for="username_id" style="font-weight: bold;">Usuario</label>
 		      <input type="text" class="form-control" id="username_id">
 		    </div>
@@ -112,30 +114,13 @@
 		    <button type="button" class="btn btn-secondary" onclick="signIn()">Iniciar sesión</button>
 		    <br>
 		    <div class="w-100">
-		      <div class="alert alert-danger w-100 m-0"  role="alert" style="display: none;" id="error_login_alert_id">
-		      </div>
-	   		</div>
-		</div>
+		    	<div class="alert alert-danger w-100 m-0"  role="alert" style="display: none;" id="error_login_alert_id">
+		    </div>
+	   	</div>
+	    </div>
 	</div>
 
-<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
-	<!-- Modal Sign In -- PENDIENTE DE BORRAR -->
-	<div class="modal fade" id="modal_SignIn_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header" style="background-color:#295E7E">
-	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Inicio de sesión</h1>
-	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-	      </div>
-	      <div class="modal-body" id="modal_SignIn_body_id">
-	      </div>
-	      <div class="modal-footer" style="background-color:#295E7E;">
-	        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
-	        <button type="button" class="btn btn-light" data-bs-dismiss="modal" onclick="signIn()">Iniciar sesión</button>
-	      </div>
-	    </div>
-	  </div>
-	</div>
+
 <!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 	<!-- Modal Registrar Finca-->
 	<div class="modal fade" id="modal_RegFinca_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -148,9 +133,9 @@
 	      <div class="modal-body" id="modal_RegFinca_body_id">
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
-			  <div>
-			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			  <div>	    
 			    <button type="button" class="btn btn-light" onclick="registerEstate()">Registrar</button>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
 			  </div>
 			</div>
 	    </div>
@@ -188,9 +173,10 @@
 	      <div class="modal-body" id="modal_Invite_body_id">
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
-	        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+	        
 	        <button type="button" class="btn btn-light" onclick="inviteUser()" id="botonInvitar" style="display:none">Invitar</button>
 	        <button type="button" class="btn btn-light" onclick="comprobarUser()" id="botonBuscar" style="display:none">Comprobar</button>
+	        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
 	      </div>
 	    </div>
 	  </div>
@@ -207,8 +193,9 @@
 	      <div class="modal-body" id="modal_mandar_archivo_body_id">
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
-	        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+	        
 	        <button type="button" class="btn btn-light" onclick="enviarArchivo()" id="botonEnviar_archivo">Enviar</button>
+	        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
 	      </div>
 	    </div>
 	  </div>
@@ -225,11 +212,11 @@
 	      <div class="modal-body" id="modal_RegProp_body_id">
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
-			  <div>
-			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
-			    <button type="button" class="btn btn-light" onclick="registerProperty()">Registrar</button>
-			  </div>
-			</div>
+		<div>  
+		    <button type="button" class="btn btn-light" onclick="registerProperty()">Registrar</button>
+		    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+		</div>
+	      </div>
 	    </div>
 	  </div>
 	</div>
@@ -245,11 +232,11 @@
 	      <div class="modal-body" id="modal_uploadArchivos_body_id">
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
-			  <div>
-			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
-			    <button type="button" class="btn btn-light" id="uploadFileButton" onclick="uploadFile()">Subir archivo</button>
-			  </div>
-			</div>
+		<div>
+	          <button type="button" class="btn btn-light" id="uploadFileButton" onclick="uploadFile()">Subir archivo</button>
+		  <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+		</div>
+		</div>
 	    </div>
 	  </div>
 	</div>
@@ -266,8 +253,9 @@
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
 			  <div>
-			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			    
 			    <button type="button" class="btn btn-light" id="createEventButton" onclick="crearEvento()">Crear</button>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
 			  </div>
 			</div>
 	    </div>
@@ -286,8 +274,9 @@
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
 			  <div>
-			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			    
 			    <button type="button" class="btn btn-light" id="createEventButton" onclick="contactAdmin()">Enviar</button>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
 			  </div>
 			</div>
 	    </div>
@@ -306,9 +295,10 @@
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
 			  <div>
-			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			    
 			    <button type="button" class="btn btn-light" id="marcarLeidoButton" onclick="marcarLeido()">Marcar como leido</button>
 			    <button type="button" class="btn btn-danger" id="borrarMsgButton" onclick="eliminarMsg()" data-bs-dismiss="modal">Eliminar</button>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
 			  </div>
 			</div>
 	    </div>
@@ -327,8 +317,9 @@
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
 			  <div>
-			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
-			    <button type="button" class="btn btn-light" id="createEventButton" onclick="cancelarEvento()">Cancelar Evento</button>
+			  	<button type="button" class="btn btn-light" onclick="downloadInfoEventCSV()">Descargar Resultados</button>
+			  	<button type="button" class="btn btn-danger" id="createEventButton" onclick="cancelarEvento()">Cancelar Evento</button>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>  
 			  </div>
 			</div>
 	    </div>
@@ -347,8 +338,9 @@
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
 			  <div>
-			  	<button type="button" class="btn btn-success" id="confirmarAsistenciaButton">Confirmar</button>
-			  	<button type="button" class="btn btn-danger" id="declinarAsistenciaButton">Declinar</button>
+			  	<!--button type="button" class="btn btn-success" id="confirmarAsistenciaButton">Confirmar</button>
+			  	<button type="button" class="btn btn-danger" id="declinarAsistenciaButton">Declinar</button-->
+			  	<button type="button" class="btn btn-light" data-bs-dismiss="modal" id="boton_asistencia_id">Enviar respuesta</button>	
 			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
 			  </div>
 			</div>
@@ -368,8 +360,8 @@
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
 			  <div>
-			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
-			    <button type="button" class="btn btn-light" id="createEventButton" onclick="crearEncuesta()">Enviar Encuesta</button>	
+			  	<button type="button" class="btn btn-light" id="createEventButton" onclick="crearEncuesta()">Enviar Encuesta</button>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>	    	
 			  </div>
 			</div>
 	    </div>
@@ -388,6 +380,7 @@
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
 			  <div>
+			  	<button type="button" class="btn btn-light" onclick="downloadSurveyCSV()">Descargar Resultados</button>
 			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
 			  </div>
 			</div>
@@ -407,8 +400,9 @@
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
 			  <div>
-			  	<button type="button" class="btn btn-success" id="votoSiButton">SI</button>
-			  	<button type="button" class="btn btn-danger" id="votoNoButton">NO</button>
+			  	<!--button type="button" class="btn btn-success" id="votoSiButton">SI</button>
+			  	<button type="button" class="btn btn-danger" id="votoNoButton">NO</button-->
+			  	<button type="button" class="btn btn-light" data-bs-dismiss="modal" id="boton_votar_id">Votar</button>	
 			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>		    
 			  </div>
 			</div>
@@ -427,9 +421,9 @@
 	      <div class="modal-body" id="modal_difundido_body_id">
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
-			  <div>
-			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+		<div>
 			    <button type="button" class="btn btn-light" id="createEventButton" onclick="difundirMensaje()">Enviar Mensaje</button>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
 			  </div>
 			</div>
 	    </div>
@@ -437,4 +431,5 @@
 	</div>
 
 </body>
+	
 </html>
