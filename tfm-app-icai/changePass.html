@@ -1,3 +1,5 @@
+<!--Formulario para el cambio de la contraseña temporal-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,18 +24,38 @@
     <script src="./js/funcionesCognito.js"></script>
 
     <style>
-        #contenido_id{
-
-            width: 60%;
-
+        .navbar {
+            width: 100%; 
+            display: flex; 
+            justify-content: center; 
+            background-color: #295E7E;
+        }   
+        #contenido_id {
+            width: 60%; 
+            max-height: 87vh; 
+            height: auto; 
+            margin: 30px auto; 
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: auto; 
+            display: flex;
+            flex-direction: column; 
+            justify-content: flex-start;      
+        }
+        #formulario-changePass {
+            width: 80%; 
+            padding: 20px; 
             margin-left: auto;
-
             margin-right: auto;
-
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
         }
     </style>
 </head>
-<body>
+<body style="background-color:#AEBAC2;">
 
     <nav class="navbar" style="background-color:#295E7E;">
         <div class="container-fluid d-flex justify-content-between">
@@ -47,23 +69,25 @@
     </nav>
     <br>
     <div id="contenido_id">
-        <div>
-            <label for="userLogin">Usuario</label>
-            <input type="text" class="form-control" id="user_login_id" placeholder="Username" required>
-        </div>
-        <br>
-        <div>
-            <label for="temp_pass_id">Contraseña temporal</label>
-            <input type="password" class="form-control"  id="temp_pass_id" placeholder="Password" required>
-        </div>
-        <br>
-        <div>
-            <label for="new_pass_id">Nueva contraseña</label>
-            <input type="password" class="form-control"  id="new_pass_id" placeholder="New password" required>
-        </div>
-        <br>
-        <div>
-            <button type="button" class="btn btn-secondary" onclick="changeTempPass()">Actualizar contraseña</button>
+        <div id="formulario-changePass">
+            <div>
+                <label for="userLogin" style="font-weight: bold;">Usuario</label>
+                <input type="text" class="form-control" id="user_login_id" placeholder="Username" required>
+            </div>
+            <br>
+            <div>
+                <label for="temp_pass_id" style="font-weight: bold;">Contraseña temporal</label>
+                <input type="password" class="form-control"  id="temp_pass_id" placeholder="Password" required>
+            </div>
+            <br>
+            <div>
+                <label for="new_pass_id" style="font-weight: bold;">Nueva contraseña</label>
+                <input type="password" class="form-control"  id="new_pass_id" placeholder="New password" required>
+            </div>
+            <br>
+            <div>
+                <button type="button" class="btn btn-secondary" onclick="changeTempPass()">Actualizar contraseña</button>
+            </div>
         </div>
     </div>
 
