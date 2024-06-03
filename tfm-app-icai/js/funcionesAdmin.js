@@ -80,10 +80,9 @@ function registerEstate(){
 
         var data = JSON.stringify(dataEstate);
 
-        // CONTROL Revisa la consola para asegurarte de que los datos se están capturando correctamente.
+        // CONTROL 
         console.log("Datos enviados a la API: ", data);
 
-        //var url = 'https://19wdfy2c13.execute-api.eu-west-3.amazonaws.com/dev';
         var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/addEstateToBBDD';
 
         $.ajax({
@@ -122,7 +121,6 @@ function registerEstate(){
 
 function registerProperty(){
 	
-    //recogemos el valor del id de al finca (almacenado en la sesión)
 	var id_finca = sessionStorage.getItem('fincaActual');
 
     //CONTROL------------------
@@ -143,7 +141,7 @@ function registerProperty(){
         setTimeout(function() {
             document.getElementById("error_newProp_alert_id").style.display = 'none';
         }, 5000); 
-        return; //Detiene la ejecución de la función si falta algún dato
+        return; 
 
     }
 
@@ -159,10 +157,10 @@ function registerProperty(){
 
 	var data = JSON.stringify(dataProp);
 
-    // CONTROL Revisa la consola para asegurarte de que los datos se están capturando correctamente.
+    // CONTROL 
     console.log("Datos enviados a la API: ", data);
 
-    //var url = 'https://pkggdo537b.execute-api.eu-west-3.amazonaws.com/dev';
+
     var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/addPropertytoBBDD';
 
 
@@ -184,8 +182,6 @@ function registerProperty(){
             cargarListadoFincas();
     	},
     	error: function(xhr, status, error){
-    		// Aquí manejas una respuesta de error.
-            // 'xhr' es el objeto XMLHttpRequest, que contiene la respuesta completa, incluyendo el cuerpo y los encabezados.
             //CONTROL
             console.error("Error en la respuesta: ", xhr.responseText);
             console.error("Detalle del error: ", status, error);
@@ -213,26 +209,23 @@ function upload(){
             reader.onload = function(e) {
                 const content = e.target.result; // contenido del archivo como texto
 
-                //var url_uploadcsv = 'https://1p0pq68cfi.execute-api.eu-west-3.amazonaws.com/dev';
                 var url_uploadcsv = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/uploadcsv';
 
                 // Realizar la llamada AJAX
                 $.ajax({
                     url: url_uploadcsv,
                     type: 'POST',
-                    data: content, // enviar el contenido directamente
-                    processData: false, // no procesar los datos
-                    contentType: 'text/csv; charset=utf-8', // establecer el tipo de contenido como CSV UTF-8
+                    data: content, 
+                    processData: false, 
+                    contentType: 'text/csv; charset=utf-8', 
                     headers: {
-                        'X-File-Name': name_file // Encabezado personalizado con el nombre del archivo
+                        'X-File-Name': name_file 
                     },
                     success: function(response) {
                         console.log('Archivo subido con éxito:', response);
-                        //cargarAlertaOK("Archivo subido con éxito");
                     },
                     error: function(xhr, status, error) {
                         console.error('Error al subir archivo:', error);
-                        //cargarAlertaError("Error al subir archivo");
                     }
                 });
             };
@@ -275,7 +268,7 @@ function uploadFile(){
             var base64String = event.target.result.split(',')[1];
 
             //var url_uploadFile = 'https://0v3v6uyn8i.execute-api.eu-west-3.amazonaws.com/dev';
-            var url_uploadFile = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/uploadFile_2';
+            var url_uploadFile = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/uploadFile';
 
             $.ajax({
                 url: url_uploadFile,
@@ -344,7 +337,6 @@ function userToProperty(user_id, rol, email){
 	var data = JSON.stringify(dataToBBDD);
 	//alert(data);
 
-    //var url_userToProp = 'https://231boxpcv4.execute-api.eu-west-3.amazonaws.com/dev';
     var url_userToProp = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/userToProperty';
 
 
@@ -472,7 +464,6 @@ function marcarLeido(){
         "id": id
     };
 
-    //var url = 'https://okku2m8a50.execute-api.eu-west-3.amazonaws.com/dev';
     var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/marcarLeido';
 
     $.ajax({
@@ -543,7 +534,7 @@ function cancelarEvento(){
         "id": id
     };
 
-    //var url = 'https://xrbuqwrxi2.execute-api.eu-west-3.amazonaws.com/dev';
+
     var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/cancelEvent';
 
     $.ajax({
@@ -586,7 +577,6 @@ function crearEncuesta(){
         "finca_id": finca_id
     }
 
-    //var url = 'https://6cujl5905c.execute-api.eu-west-3.amazonaws.com/dev';
     var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/crearEncuesta';
 
     $.ajax({
@@ -628,10 +618,11 @@ function difundirMensaje(){
         "mensaje": mensaje,
         "finca_id": finca_id,
         "destinatarios": destinatarios
-    }
+    };
 
-    //var url = 'https://tcfe126mgb.execute-api.eu-west-3.amazonaws.com/dev';
-    var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/contactAdmin'
+    console.log(JSON.stringify(dataToSend));
+
+    var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/difundirMensaje';
     $.ajax({
         url: url,
         type: 'POST',
@@ -657,5 +648,86 @@ function difundirMensaje(){
 
         }
     });
+}
+
+function downloadSurveyCSV() {
+    var encuesta = JSON.parse(sessionStorage.getItem('encActual'));
+    var fincaId = sessionStorage.getItem('fincaActual')
+    var surveyId = encuesta.ENCUESTA_ID;
+    const apiUrl = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/encuestaToCsv'; 
+
+    const data = {
+        surveyId: surveyId,
+        fincaId: fincaId
+    };
+
+    $.ajax({
+        url: apiUrl,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function(result) {
+            console.log('Respuesta recibida:', result);
+            if (result.downloadUrl) {
+                downloadFile(result.downloadUrl);
+            } else {
+                alert('No se pudo generar el archivo CSV.');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error Status:', status);
+            console.error('Error:', error);
+            console.error('XHR:', xhr);
+            console.error('Status:', xhr.status);
+            console.error('Status Text:', xhr.statusText);
+            console.error('Response Text:', xhr.responseText);
+            alert('Error al generar el archivo CSV: ' + xhr.responseText);
+        }
+    });
+}
+
+function downloadInfoEventCSV() {
+    var evt = JSON.parse(sessionStorage.getItem('evtActual'));
+    var fincaId = sessionStorage.getItem('fincaActual')
+    var evtId = evt.EVENT_ID;
+    const apiUrl = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/eventoToCsv'; 
+
+    const data = {
+        evtId: evtId,
+        fincaId: fincaId
+    };
+
+    $.ajax({
+        url: apiUrl,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function(result) {
+            console.log('Respuesta recibida:', result);
+            if (result.downloadUrl) {
+                downloadFile(result.downloadUrl);
+            } else {
+                alert('No se pudo generar el archivo CSV.');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error Status:', status);
+            console.error('Error:', error);
+            console.error('XHR:', xhr);
+            console.error('Status:', xhr.status);
+            console.error('Status Text:', xhr.statusText);
+            console.error('Response Text:', xhr.responseText);
+            alert('Error al generar el archivo CSV: ' + xhr.responseText);
+        }
+    });
+}
+
+function downloadFile(url) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = url.split('/').pop(); // Nombre del archivo para la descarga
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
