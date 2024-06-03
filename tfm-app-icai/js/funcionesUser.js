@@ -66,6 +66,7 @@ function contactAdmin(){
         "admin_id": admin_id
     }
 
+    //var url = 'https://xx8avzdz72.execute-api.eu-west-3.amazonaws.com/dev';
     var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/contactAdmin';
 
     $.ajax({
@@ -94,3 +95,139 @@ function contactAdmin(){
     });
 
 }
+
+
+
+let selectedValue= '';
+
+function selectOption(value, element){
+    selectedValue = value;
+    document.getElementById('votoSiButton').classList.remove('selected');
+    document.getElementById('votoNoButton').classList.remove('selected');
+    element.classList.add('selected');
+}
+
+//ENVIAR VOTOS A ENCUESTAS
+function sendResponse_enc() {
+    const params = getQueryParams_enc();
+    const comentarios = document.getElementById('comentarios_voto_id').value;
+
+    console.log(selectedValue);
+
+    if(selectedValue==""){
+        var alerta = document.getElementById('error_voto_alert_id');
+        alerta.innerHTML='<i class="bi bi-exclamation-triangle-fill"></i>'+" Seleccione una opción";
+        alerta.style.display="inline";
+        setTimeout(function() {
+                alerta.style.display = 'none';
+        }, 5000);
+        return;
+    }
+
+    const data = {
+        userId: params.userId,
+        surveyId: params.encuestaId,
+        response: selectedValue,
+        comentarios: comentarios
+    };
+
+    //CONTROL----------------
+    console.log(JSON.stringify(data));
+    //----------------
+
+   var url = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/votar";
+    $.ajax({
+        url: url,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function(result) {
+            //alert('Respuesta enviada: ' + result.message);
+            if(selectedValue=="SI"){
+                window.location.href = 'https://tfm-app-icai.s3.eu-west-3.amazonaws.com/voto_si.html'
+
+            }else{
+                window.location.href = 'https://tfm-app-icai.s3.eu-west-3.amazonaws.com/voto_no.html'
+
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            console.error('Detalles del error:', xhr.responseText);
+            alert('Error al enviar la respuesta: ' + xhr.responseText);
+        }
+    });
+}
+
+
+function getQueryParams_enc() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return {
+        userId: urlParams.get('token'),
+        encuestaId: urlParams.get('encuestaId')
+    };
+}
+
+
+//ENVIAR ASISTENCIA
+
+function sendResponse_evt() {
+    const params = getQueryParams_evt();
+    const comentarios = document.getElementById('comentarios_asistencia_id').value;
+
+    console.log(selectedValue);
+
+    if(selectedValue==""){
+        var alerta = document.getElementById('error_asistencia_alert_id');
+        alerta.innerHTML='<i class="bi bi-exclamation-triangle-fill"></i>'+" Seleccione una opción";
+        alerta.style.display="inline";
+        setTimeout(function() {
+                alerta.style.display = 'none';
+        }, 5000);
+        return;
+    }
+
+    const data = {
+        userId: params.userId,
+        eventoId: params.eventoId,
+        response: selectedValue,
+        comentarios: comentarios
+    };
+
+    //CONTROL----------------
+    console.log(JSON.stringify(data));
+    //----------------
+
+   var url = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/asistenciaEvt";
+    $.ajax({
+        url: url,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function(result) {
+            //alert('Respuesta enviada: ' + result.message);
+            if(selectedValue=="Confirmada"){
+                window.location.href = 'https://miprueba8.s3.eu-west-3.amazonaws.com/asistenciaConfirmada.html'
+
+            }else{
+                window.location.href = 'https://miprueba8.s3.eu-west-3.amazonaws.com/asistenciaDeclinada.html'
+
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            console.error('Detalles del error:', xhr.responseText);
+            alert('Error al enviar la respuesta: ' + xhr.responseText);
+        }
+    });
+}
+
+
+function getQueryParams_evt() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return {
+        userId: urlParams.get('token'),
+        eventoId: urlParams.get('eventoId')
+    };
+}
+
