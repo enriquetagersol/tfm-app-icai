@@ -92,7 +92,7 @@ function contactarEmpresa(){
 		"asunto": asunto,
 		"msg": msg, 
 		"admin_id": admin_id
-	}
+	};
 	//var url = "https://owr3arlfe6.execute-api.eu-west-3.amazonaws.com/dev";
 	var url = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/contactEmpresa";
 
