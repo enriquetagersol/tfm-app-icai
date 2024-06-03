@@ -116,6 +116,24 @@ function cargarNuevoEvento(){
 	});
 }
 
+function cargarEnviarArchivo(){
+	var url_EnviarArchivo = "https://tfm-app-icai.s3.eu-west-3.amazonaws.com/enviarArchivo.html";
+	$.ajax({
+		type: 'GET',
+		url: url_EnviarArchivo,
+		success: function(response){
+			document.getElementById("modal_mandar_archivo_body_id").innerHTML=response;
+			var modal = new bootstrap.Modal(document.getElementById('modal_mandar_archivo_id'));
+			modal.show();
+		},
+		error:function(response)
+		{
+			console.log(response);
+			alert(response);
+		}
+	});
+}
+
 function cargarContactAdmin(){
 	var url_ContactAdmin = "https://tfm-app-icai.s3.eu-west-3.amazonaws.com/contactAdmin.html";
 	$.ajax({
@@ -220,6 +238,7 @@ function cargarInfoEvento_User(){
 			var descripcion = document.getElementById("descripcion_evento_id");
 			titulo.innerHTML = evento.Titulo;
 			descripcion.innerHTML = evento.Descripcion;
+			var modal = new bootstrap.Modal(document.getElementById('modal_info_evento_user_id'));
 
 			var total = evento.Totales.totalInvitados;
 			var confirmados = evento.Totales.totalConfirmados;
@@ -246,31 +265,29 @@ function cargarInfoEvento_User(){
 
 			var invitados = evento.Invitados;
 
-			var boton_confirmar = document.getElementById('confirmarAsistenciaButton');
-			var url_confirmar = invitados[user_id].confirm_url;
-			var url_declinar = invitados[user_id].decline_url;
-			boton_confirmar.onclick = function(){
-				//var user_id = sessionStorage.getItem('userActual');
-				window.open(url_confirmar, '_blank');
-				cargarListadoPropiedades_Users();
-				modal.hide();
-			}
-			var boton_declinar = document.getElementById('declinarAsistenciaButton');
-			boton_declinar.onclick = function(){
-				//var user_id = sessionStorage.getItem('userActual');
-				window.open(url_declinar, '_blank');
-				cargarListadoPropiedades_Users();
-				modal.hide();
-			}
+			var boton_asistencia = document.getElementById('boton_asistencia_id');
+
 			var asistencia = invitados[user_id].asistencia;
+			var evento_id = evento.EVENT_ID;
+			console.log(evento_id);
+			console.log(asistencia);
 			if(asistencia != "Sin confirmar"){
-				boton_confirmar.disabled=true;
-				boton_declinar.disabled=true;
+				boton_asistencia.disabled=true;
+			}
+			else{
+				boton_asistencia.disabled=false;
+			}
+
+			url = `https://tfm-app-icai.s3.eu-west-3.amazonaws.com/asistencia.html?token=${user_id}&eventoId=${evento_id}`;
+			console.log(url);
+
+			boton_asistencia.onclick = function(){
+				window.open(url, '_blank');
+				cargarListadoPropiedades_Users();
+				modal.hide();
 
 			}
 
-
-			var modal = new bootstrap.Modal(document.getElementById('modal_info_evento_user_id'));
 			modal.show();
 		},
 		error: function(response){
@@ -333,6 +350,7 @@ function cargarInfoEncuesta(){
 
 function cargarInfoEncuesta_User(){
 	var encuesta = JSON.parse(sessionStorage.getItem('encActual'));
+	console.log(encuesta);
 	var user_id = sessionStorage.getItem('userActual');
 	//CONTROL-----
 	console.log(user_id);
@@ -347,6 +365,7 @@ function cargarInfoEncuesta_User(){
 			var descripcion = document.getElementById("descripcion_encuesta_id");
 			motivo.innerHTML = encuesta.Motivo;
 			descripcion.innerHTML = encuesta.Descripcion;
+			var modal = new bootstrap.Modal(document.getElementById('modal_info_encuestas_user_id'));
 
 			var total =  encuesta.Totales.totalEncuestados;
 			var si = encuesta.Totales.totalSi;
@@ -358,7 +377,7 @@ function cargarInfoEncuesta_User(){
 			var no_prct = (no/total)*100;
 
 			var si_bar = document.getElementById("progress_si_id");
-			var nsnc_bar = document.getElementById("progress_nsnc_id");progress_nsnc_id
+			var nsnc_bar = document.getElementById("progress_nsnc_id");
 			var no_bar = document.getElementById("progress_no_id");
 			var p_total = document.getElementById("total_encuestados_id");
 
@@ -373,30 +392,29 @@ function cargarInfoEncuesta_User(){
 
 			var encuestados = encuesta.Encuestados;
 
-			var boton_si = document.getElementById('votoSiButton');
-			var url_si = encuestados[user_id].url_si;
-			var url_no = encuestados[user_id].url_no;
-			boton_si.onclick = function(){
-				//var user_id = sessionStorage.getItem('userActual');
-				window.open(url_si, '_blank');
-				cargarListadoPropiedades_Users();
-				modal.hide();
-			}
-			var boton_no = document.getElementById('votoNoButton');
-			boton_no.onclick = function(){
-				//var user_id = sessionStorage.getItem('userActual');
-				window.open(url_no, '_blank');
-				cargarListadoPropiedades_Users();
-				modal.hide();
-			}
+			var boton_votar = document.getElementById('boton_votar_id');
+
 			var voto = encuestados[user_id].voto;
+			var encuesta_id = encuesta.ENCUESTA_ID;
+			console.log(encuesta_id);
+			console.log(voto);
 			if(voto != "NSNC"){
-				boton_si.disabled=true;
-				boton_no.disabled=true;
+				boton_votar.disabled=true;
+			}
+			else{
+				boton_votar.disabled=false;
+			}
+
+			url = `https://tfm-app-icai.s3.eu-west-3.amazonaws.com/votar.html?token=${user_id}&encuestaId=${encuesta_id}`;
+			console.log(url);
+
+			boton_votar.onclick = function(){
+				window.open(url, '_blank');
+				cargarListadoPropiedades_Users();
+				modal.hide();
 
 			}
 
-			var modal = new bootstrap.Modal(document.getElementById('modal_info_encuestas_user_id'));
 			modal.show();
 		},
 		error:function(response)
@@ -456,7 +474,6 @@ function cargarListadoFincas(){
         //CONTROL-----------------------------------
         var dataRequest = JSON.stringify(data);
         //-------------------------------------------
-
 
         var url_listadoFincas = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listadoFincas';
 
@@ -696,6 +713,8 @@ function cargarMensajesAdmin(){
 function cargarPaginaFinca(finca) {
 
     var url_PagFinca = "https://tfm-app-icai.s3.eu-west-3.amazonaws.com/paginaFinca.html";
+    sessionStorage.setItem('fincaActual', finca.ESTATE_ID);
+
 
     $.ajax({
         type: 'GET',
@@ -713,7 +732,6 @@ function cargarPaginaFinca(finca) {
             var dataRequest = JSON.stringify(data);
 
             //CARGAR LISTADO DE EVENTOS-----------------------------------------------------------------------------------------------------------------------------------------------
-           
             var url_api_listaEventos = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listaEventos";
 
             $.ajax({
@@ -731,27 +749,35 @@ function cargarPaginaFinca(finca) {
 
                     response.futureEvents.forEach(function(evento){
 
-                    	var dateString_evento= evento.Start;
-						const year_evento = dateString_evento.substring(0, 4);
-						const month_evento = dateString_evento.substring(4, 6);
-						const day_evento = dateString_evento.substring(6, 8);
-						const hour_evento = dateString_evento.substring(9, 11);
-						const minute_evento = dateString_evento.substring(11, 13);
+                    	var startDate_epoch = evento.Start*1000;
+						var endDate_epoch = evento.End*1000;
 
-						const date_evento = new Date(year_evento, month_evento - 1, day_evento, hour_evento, minute_evento);
-						var fecha_evento = date_evento.toLocaleString();
+						var startDate = new Date(startDate_epoch).toLocaleDateString("es-ES", {
+					        year: 'numeric', month: '2-digit', day: '2-digit',
+					        hour: '2-digit', minute: '2-digit', 
+					        hour12: false
+					    });
+
+					    var endDate = new Date(endDate_epoch).toLocaleDateString("es-ES", {
+					        year: 'numeric', month: '2-digit', day: '2-digit',
+					        hour: '2-digit', minute: '2-digit', 
+					        hour12: false
+					    });
 
                         var eventItem = document.createElement('a');
                         eventItem.className = 'list-group-item list-group-item-action';
                         var evtTitle = document.createElement('h5');
                         evtTitle.innerHTML += evento.Titulo;
-						var evtFecha = document.createElement('p');
-						evtFecha.innerHTML="<strong>Fecha:</strong> "+fecha_evento;
+						var evtFechaStart = document.createElement('p');
+						evtFechaStart.innerHTML="<strong>Fecha inicio:</strong> "+startDate;
+						var evtFechaEnd = document.createElement('p');
+						evtFechaEnd.innerHTML="<strong>Fecha inicio:</strong> "+endDate;
 
 
                         eventItem.href = '#';
                         eventItem.appendChild(evtTitle);
-                        eventItem.appendChild(evtFecha);
+                        eventItem.appendChild(evtFechaStart);
+                        eventItem.appendChild(evtFechaEnd);
 
                         eventItem.onclick = function(){
                         	sessionStorage.setItem('evtActual', JSON.stringify(evento));
@@ -771,7 +797,6 @@ function cargarPaginaFinca(finca) {
             //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
             //CARGAR LISTADO DE ENCUESTAS-------------------------------------------------------------------------------------------------------------------------------------------------
-          
             var url_api_listaEncuestas = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listEncuestas";
 
             $.ajax({
@@ -819,7 +844,12 @@ function cargarPaginaFinca(finca) {
 						var encTitle = document.createElement('h5');
 						var enc_tiempoRestante = document.createElement('p');
 						enc_tiempoRestante.style.color = 'red'; 
-						enc_tiempoRestante.innerHTML="Esta encuesta caduca en "+dias+" días"
+						if(dias!=0)
+						{
+							enc_tiempoRestante.innerHTML="Esta encuesta caduca en "+dias+" días";
+						}else{
+							enc_tiempoRestante.innerHTML="Esta encuesta caduca hoy";
+						}						
 						
 						encTitle.innerHTML += motivo;
 
@@ -828,8 +858,11 @@ function cargarPaginaFinca(finca) {
 
                         encItem.onclick = function(){
                         	//cargarMensaje(msg);
+                        	
                         	sessionStorage.setItem('encActual', JSON.stringify(enc));
+                        	//CONTROL------
                         	console.log(enc);
+                        	//-------------
                         	cargarInfoEncuesta();
  
                         }
@@ -850,7 +883,6 @@ function cargarPaginaFinca(finca) {
 
             //CARGAR LISTADO DE PROPIEDADES-----------------------------------------------------------------------------------------------------------------------------------------------
 
-          
             var url_api_listaProp = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listadoPropiedades';
 
             $.ajax({
@@ -892,15 +924,20 @@ function cargarPaginaFinca(finca) {
 					    accordionBody.className = 'accordion-body d-flex justify-content-between align-items-center';
 
     					var propertyInfoContainer = document.createElement('div');
-
-					    //var ownerInfo = document.createElement('p');
-					    //ownerInfo.innerHTML = '<strong>Propietario: </strong>' + prop.ownerName + " " + prop.ownerSurname;
 					    
 					    var descriptionInfo = document.createElement('p');
-					    descriptionInfo.innerHTML = '<strong>Tipo: </strong>' + prop.Type; 
+					    //descriptionInfo.innerHTML = '<strong>Tipo: </strong>' + prop.Type; 
+					    descriptionInfo.innerHTML = `
+
+                        <strong>Tipo:</strong> ${prop.Type}<br>
+                        <strong>Descripción:</strong> ${prop.Description}<br>
+                        <strong>Share:</strong> ${prop.Share}%<br>
+                        <strong>IBAN:</strong> ${prop.IBAN}
+                        
+                    	`;
 
 					    propertyInfoContainer.appendChild(descriptionInfo);
-					    //propertyInfoContainer.appendChild(ownerInfo);
+					  
 					    
 					    accordionBody.appendChild(propertyInfoContainer);
 
@@ -988,7 +1025,7 @@ function cargarPaginaFinca(finca) {
                         elementoLista_2.style.paddingBottom = '5px';
                         elementoLista_2.style.marginBottom = '5px';
 
-                        var textContainer_2 = document.createElement('div'); 
+                        var textContainer_2 = document.createElement('div');
                         textContainer_2.className = 'me-auto'; 
                         var nombre_file_div = document.createElement('div');
                         nombre_file_div.innerHTML = "<strong>Nombre:</strong> " + doc.fileName;
@@ -1001,7 +1038,6 @@ function cargarPaginaFinca(finca) {
                         elementoLista_2.appendChild(textContainer_2); 
 
                         var buttonsContainer = document.createElement('div'); 
-
 
 
 			            var enlaceDownload = document.createElement('a');
@@ -1205,7 +1241,6 @@ function cargarListadoPropiedades_Users() {
 		            var dataRequest = JSON.stringify(data);
 
 		            //Listado de eventos-----------------------------------------------------------------------------------------------------
-					
 					var url_api_listaEventos = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listaEventos';
 
 		            $.ajax({
@@ -1221,16 +1256,20 @@ function cargarListadoPropiedades_Users() {
 		                    contenedor_eventos.style.marginTop = '10px';
 
 		                    response.futureEvents.forEach(function(evento){
+		                    	var startDate_epoch = evento.Start*1000;
+								var endDate_epoch = evento.End*1000;
 
-		                    	var dateString_evento= evento.Start;
-								const year_evento = dateString_evento.substring(0, 4);
-								const month_evento = dateString_evento.substring(4, 6);
-								const day_evento = dateString_evento.substring(6, 8);
-								const hour_evento = dateString_evento.substring(9, 11);
-								const minute_evento = dateString_evento.substring(11, 13);
+								var startDate = new Date(startDate_epoch).toLocaleDateString("es-ES", {
+							        year: 'numeric', month: '2-digit', day: '2-digit',
+							        hour: '2-digit', minute: '2-digit', 
+							        hour12: false
+							    });
 
-								const date_evento = new Date(year_evento, month_evento - 1, day_evento, hour_evento, minute_evento);
-								var fecha_evento = date_evento.toLocaleString();
+							    var endDate = new Date(endDate_epoch).toLocaleDateString("es-ES", {
+							        year: 'numeric', month: '2-digit', day: '2-digit',
+							        hour: '2-digit', minute: '2-digit', 
+							        hour12: false
+					    		});
 
 		                        var eventItem = document.createElement('a');
 		                        eventItem.className = 'list-group-item list-group-item-action';
@@ -1239,10 +1278,13 @@ function cargarListadoPropiedades_Users() {
 		                        var evtTitle = document.createElement('h5');
                         		evtTitle.innerHTML += evento.Titulo;
 
-								var evtFecha = document.createElement('p');
-								evtFecha.innerHTML="<strong>Fecha:</strong> "+fecha_evento;
+								var evtFechaStart = document.createElement('p');
+								evtFechaStart.innerHTML="<strong>Fecha:</strong> "+startDate;
+								var evtFechaEnd = document.createElement('p');
+								evtFechaEnd.innerHTML="<strong>Fecha:</strong> "+endDate;
 								eventItem.appendChild(evtTitle);
-                        		eventItem.appendChild(evtFecha);
+                        		eventItem.appendChild(evtFechaStart);
+                        		eventItem.appendChild(evtFechaEnd);
 
                         		var eventResponse = document.createElement('p');
 
@@ -1294,7 +1336,7 @@ function cargarListadoPropiedades_Users() {
 					//------------------------------------------------------------------------------------------------------------------------------
 
 		            //Lista encuestas---------------------------------------------------------------------------------------------------------------
-		            
+
 		            var url_api_listaEncuestas = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listEncuestas'
 		            $.ajax({
 		            	type: 'POST',
@@ -1439,7 +1481,9 @@ function cargarListadoPropiedades_Users() {
                         <strong>Dirección:</strong> ${prop.EstateDetails.address}<br>
                         <strong>Ciudad:</strong> ${prop.EstateDetails.city}<br>
                         <strong>Tipo:</strong> ${prop.Type}<br>
-                        <strong>Descripción:</strong> ${prop.Description}
+                        <strong>Descripción:</strong> ${prop.Description}<br>
+                        <strong>Share:</strong> ${prop.Share}%<br>
+                        <strong>IBAN:</strong> ${prop.IBAN}
                         
                     `;
                     infoCollapse.appendChild(infoBody);
@@ -1469,7 +1513,6 @@ function cargarListadoPropiedades_Users() {
 		                "estate_id": prop.EstateDetails.ESTATE_ID
 		            };
 
-		            
 		            var url_listaDocs = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listDocs';
 
 		            var dataRequest_2 = JSON.stringify(data_2);
@@ -1477,7 +1520,7 @@ function cargarListadoPropiedades_Users() {
                         type: 'POST',
                         url: url_listaDocs,
                         contentType: 'application/json',
-                        data: dataRequest_2, // La solicitud específica con los datos de la finca actual
+                        data: dataRequest_2, 
                         success: function(docsResponse) {
                         	var contenedor_2 = document.createElement('div');
                     		contenedor_2.innerHTML = '';
@@ -1503,11 +1546,11 @@ function cargarListadoPropiedades_Users() {
 
 									        	var newTab = window.open(response.urlPreFirmada, '_blank');
 
-										        // Si el bloqueador de pop-ups está activado, newTab será null
+										
 										        if (newTab) {
 										            newTab.focus();
 										        } else {
-										            // Opcional: Informar al usuario que debe desactivar el bloqueador de pop-ups
+										            
 										            alert('Por favor, desactiva el bloqueador de ventanas emergentes para descargar el archivo.');
 										        }
 									        },
@@ -1532,3 +1575,5 @@ function cargarListadoPropiedades_Users() {
         });
     });
 }
+
+
