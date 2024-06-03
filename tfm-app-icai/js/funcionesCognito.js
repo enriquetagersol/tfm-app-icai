@@ -338,7 +338,7 @@ function inviteUser(){
     		//------------------------------------
 
     		//GUARDAR USUARIO EN BBDD
-    		//var url_userToBBDD = 'https://zl4qcuha2h.execute-api.eu-west-3.amazonaws.com/dev';
+    		
     		var url_userToBBDD = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/addUserToBBDD';
             $.ajax({
 		        url: url_userToBBDD, 
@@ -481,9 +481,9 @@ function signOut(){
     if (cognitoUser != null) {
         cognitoUser.signOut();
         
-        // Opcional: Redirigir al usuario después del cierre de sesión
+
         alert("Sesión cerrada");
-        //window.location.href = 'https://miprueba8.s3.eu-west-3.amazonaws.com/index.html';
+
         window.location.href = 'http://tfm-app-icai.s3-website.eu-west-3.amazonaws.com'
     }
 }
