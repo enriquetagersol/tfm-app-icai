@@ -1,7 +1,9 @@
+<!--Formulario para registrar una finca-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Aplicación SPA</title>
 
@@ -26,19 +28,28 @@
 <body>
   <br>
   <div class="form-group">
-    <label for="name_id">Nombre Finca</label>
+    <label for="name_id" style="font-weight: bold;">Nombre Finca</label>
     <input type="text" class="form-control" id="name_id" placeholder="Residencial...">
   </div>
+
+  <br>
+
   <div class="form-group">
-    <label for="address_id">Dirección</label>
+    <label for="address_id" style="font-weight: bold;">Dirección</label>
     <input type="text" class="form-control" id="address_id" placeholder="1234 Main St">
   </div>
+
+  <br>
+
   <div class="form-group">
-    <label for="city_id">Población</label>
+    <label for="city_id" style="font-weight: bold;">Población</label>
     <input type="text" class="form-control" id="city_id" placeholder="Población">
   </div>
+
+  <br>
+
   <div class="form-group">
-    <label for="region_id">Región</label>
+    <label for="region_id" style="font-weight: bold;">Región</label>
       <div class="row">
         <div class="col">
           <input type="text" class="form-control" id="region_id" placeholder="Región">
@@ -48,7 +59,9 @@
         </div>
       </div>
   </div>
+
   <br>
+
   <div class="w-100">
     <div class="alert alert-danger w-100 m-0"  role="alert" style="display: none;" id="error_newEstate_alert_id">
     </div>
