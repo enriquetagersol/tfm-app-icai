@@ -140,7 +140,7 @@ function continueLoginProcess() {
 	    	document.getElementById("btn_signOut_id").style.display = "inline";
 	    	cargarListadoFincas();
 	    	cargarMensajesAdmin();
-	    	document.getElementById("inbox_admin_id").style.display="inline";
+	    	document.getElementById("inbox_btn_group_id").style.display="inline";
 	    	document.getElementById("btn_add_finca_id").style.display="inline";
 	    	document.getElementById("titulo_app_id").onclick = function() {
 			    cargarListadoFincas();
