@@ -9,8 +9,8 @@ const s3 = new AWS.S3();
 exports.handler = async (event) => {
     const requestBody = JSON.parse(event.body);
     const estate_id = requestBody.estate_id;
-    const bucketName = 'miprueba8';
-    const prefix = 'docs/'+estate_id+'/'; // Si quieres listar archivos en una subcarpeta específica
+    const bucketName = 'tfm-app-icai';
+    const prefix = 'docs/'+estate_id+'/'; 
 
     const params = {
         Bucket: bucketName,
@@ -37,8 +37,8 @@ exports.handler = async (event) => {
         return {
             statusCode: 200,
             headers: {
-                "Access-Control-Allow-Origin": "*", // Para producción especifica el dominio en lugar de usar *
-                "Access-Control-Allow-Credentials": true, // Si es necesario para tus credenciales
+                "Access-Control-Allow-Origin": "*", 
+                "Access-Control-Allow-Credentials": true, 
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(files),
@@ -48,8 +48,8 @@ exports.handler = async (event) => {
         return {
             statusCode: 500,
             headers: {
-                "Access-Control-Allow-Origin": "*", // Para producción especifica el dominio en lugar de usar *
-                "Access-Control-Allow-Credentials": true, // Si es necesario para tus credenciales
+                "Access-Control-Allow-Origin": "*", 
+                "Access-Control-Allow-Credentials": true, 
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ error: "Error al listar archivos" }),
