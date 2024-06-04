@@ -49,7 +49,7 @@ exports.handler = async (event) => {
                 "Piso": requestBody.piso,
                 "Share": requestBody.share,
                 "Type": requestBody.tipo,
-                "IBAN": requestBody
+                "IBAN": requestBody.IBAN
             }
         };
 
