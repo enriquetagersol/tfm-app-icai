@@ -282,12 +282,12 @@ function cargarInfoEvento_User(){
 			console.log(url);
 
 			boton_asistencia.onclick = function(){
-				window.open(url, '_blank');
 				cargarListadoPropiedades_Users();
+				window.open(url, '_blank');
 				modal.hide();
 
 			}
-
+			
 			modal.show();
 		},
 		error: function(response){
@@ -409,12 +409,12 @@ function cargarInfoEncuesta_User(){
 			console.log(url);
 
 			boton_votar.onclick = function(){
-				window.open(url, '_blank');
 				cargarListadoPropiedades_Users();
+				window.open(url, '_blank');	
 				modal.hide();
 
 			}
-
+			
 			modal.show();
 		},
 		error:function(response)
@@ -475,6 +475,7 @@ function cargarListadoFincas(){
         var dataRequest = JSON.stringify(data);
         //-------------------------------------------
 
+        //var url_listadoFincas = 'https://qto101bjde.execute-api.eu-west-3.amazonaws.com/dev';
         var url_listadoFincas = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listadoFincas';
 
 		$.ajax({
@@ -512,12 +513,14 @@ function cargarListadoFincas(){
                     	//CREAMOS VARIABLE DE SESIÓN CON EL ID DE LA FINCA PARA CUANDO CREEMOS USUARIOS O SUBAMOS ARCHIVOS
                     	sessionStorage.setItem('fincaActual', finca.ESTATE_ID);
                     	sessionStorage.setItem('fincaActual_object', JSON.stringify(finca));
+                    	//sessionStorage.setItem('fincaActual_object', finca);
 
                     	// CONTROL-----------------------------------
                     	console.log(sessionStorage.getItem('fincaActual'));
                     	//-------------------------------------------
 
-				        cargarPaginaFinca(finca);
+				        //cargarPaginaFinca(finca);
+				        cargarPaginaFinca();
 				    };
 
                     var espacioColor = document.createElement('div');
@@ -710,10 +713,10 @@ function cargarMensajesAdmin(){
 	});
 }
 
-function cargarPaginaFinca(finca) {
+function cargarPaginaFinca() {
 
     var url_PagFinca = "https://tfm-app-icai.s3.eu-west-3.amazonaws.com/paginaFinca.html";
-    sessionStorage.setItem('fincaActual', finca.ESTATE_ID);
+    var finca = JSON.parse(sessionStorage.getItem('fincaActual_object'));
 
 
     $.ajax({
@@ -732,6 +735,7 @@ function cargarPaginaFinca(finca) {
             var dataRequest = JSON.stringify(data);
 
             //CARGAR LISTADO DE EVENTOS-----------------------------------------------------------------------------------------------------------------------------------------------
+            //var url_api_listaEventos = "https://a19xwwe9oh.execute-api.eu-west-3.amazonaws.com/dev";
             var url_api_listaEventos = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listaEventos";
 
             $.ajax({
@@ -797,6 +801,7 @@ function cargarPaginaFinca(finca) {
             //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
             //CARGAR LISTADO DE ENCUESTAS-------------------------------------------------------------------------------------------------------------------------------------------------
+            //var url_api_listaEncuestas = "https://y096rynude.execute-api.eu-west-3.amazonaws.com/dev";
             var url_api_listaEncuestas = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listEncuestas";
 
             $.ajax({
@@ -883,6 +888,7 @@ function cargarPaginaFinca(finca) {
 
             //CARGAR LISTADO DE PROPIEDADES-----------------------------------------------------------------------------------------------------------------------------------------------
 
+            //var url_api_listaProp = "https://tpygx3cl18.execute-api.eu-west-3.amazonaws.com/dev";
             var url_api_listaProp = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listadoPropiedades';
 
             $.ajax({
@@ -926,7 +932,6 @@ function cargarPaginaFinca(finca) {
     					var propertyInfoContainer = document.createElement('div');
 					    
 					    var descriptionInfo = document.createElement('p');
-					    //descriptionInfo.innerHTML = '<strong>Tipo: </strong>' + prop.Type; 
 					    descriptionInfo.innerHTML = `
 
                         <strong>Tipo:</strong> ${prop.Type}<br>
@@ -937,7 +942,6 @@ function cargarPaginaFinca(finca) {
                     	`;
 
 					    propertyInfoContainer.appendChild(descriptionInfo);
-					  
 					    
 					    accordionBody.appendChild(propertyInfoContainer);
 
@@ -1004,7 +1008,6 @@ function cargarPaginaFinca(finca) {
 
 			//CARGAR LISTADO DE DOCUMENTOS------------------------------------------------------------------------------------------------------------------------------------------------
 
-			
 			var url_api_listaDocs='https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listDocs';
 
 			$.ajax({
@@ -1025,7 +1028,7 @@ function cargarPaginaFinca(finca) {
                         elementoLista_2.style.paddingBottom = '5px';
                         elementoLista_2.style.marginBottom = '5px';
 
-                        var textContainer_2 = document.createElement('div');
+                        var textContainer_2 = document.createElement('div'); 
                         textContainer_2.className = 'me-auto'; 
                         var nombre_file_div = document.createElement('div');
                         nombre_file_div.innerHTML = "<strong>Nombre:</strong> " + doc.fileName;
@@ -1038,6 +1041,23 @@ function cargarPaginaFinca(finca) {
                         elementoLista_2.appendChild(textContainer_2); 
 
                         var buttonsContainer = document.createElement('div'); 
+
+              
+                        /*var enlaceMail = document.createElement('a');
+			            enlaceMail.className = 'btn btn-secondary btn-sm me-2';
+			            enlaceMail.innerHTML = 'Enviar ';
+			            enlaceMail.href = '#';
+			            enlaceMail.onclick = function(event) {
+			                event.preventDefault();
+			                //alert(doc.fileName);
+			                //enviarArchivo(doc.Key);
+			                sessionStorage.setItem('archivoActual', doc.Key);
+			                cargarEnviarArchivo();
+			            }
+			            var iconMail = document.createElement('i');
+			            iconMail.className = 'bi bi-envelope';
+			            enlaceMail.appendChild(iconMail);
+			            buttonsContainer.appendChild(enlaceMail);*/
 
 
 			            var enlaceDownload = document.createElement('a');
@@ -1336,7 +1356,6 @@ function cargarListadoPropiedades_Users() {
 					//------------------------------------------------------------------------------------------------------------------------------
 
 		            //Lista encuestas---------------------------------------------------------------------------------------------------------------
-
 		            var url_api_listaEncuestas = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listEncuestas'
 		            $.ajax({
 		            	type: 'POST',
@@ -1420,7 +1439,6 @@ function cargarListadoPropiedades_Users() {
 								       //CONTROL------	
 								      console.log(`El voto del encuestado con ID ${user_id} es: ${voto}`);
 								      //-------
-								      //encVoto.style.color = 'green';
 								      enc_tiempoRestante.style.color = 'red';
 								      encVoto.style.fontWeight = 'bold';
 								      encVoto.innerHTML="Usted ha votado: "+voto;
@@ -1438,10 +1456,7 @@ function cargarListadoPropiedades_Users() {
 		                        encItem.appendChild(encVoto);
 
 		                        encItem.onclick = function(){
-		                        	//cargarMensaje(msg);
 		                        	sessionStorage.setItem('encActual', JSON.stringify(enc));
-		                        	console.log(enc);
-		                        	//cargarInfoEncuesta();
 		                        	cargarInfoEncuesta_User();
 		 
 		                        }
@@ -1546,7 +1561,7 @@ function cargarListadoPropiedades_Users() {
 
 									        	var newTab = window.open(response.urlPreFirmada, '_blank');
 
-										
+										        // Si el bloqueador de pop-ups está activado, newTab será null
 										        if (newTab) {
 										            newTab.focus();
 										        } else {
