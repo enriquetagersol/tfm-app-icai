@@ -713,6 +713,7 @@ function cargarMensajesAdmin(){
 	});
 }
 
+
 function cargarPaginaFinca() {
 
     var url_PagFinca = "https://tfm-app-icai.s3.eu-west-3.amazonaws.com/paginaFinca.html";
@@ -729,320 +730,253 @@ function cargarPaginaFinca() {
             document.getElementById("reg_finca_id").innerHTML = finca.region;
             document.getElementById("cp_finca_id").innerHTML = finca.zip;
 
-            var data = {
-                "estate_id": finca.ESTATE_ID
-            };
-            var dataRequest = JSON.stringify(data);
-
+            
             //CARGAR LISTADO DE EVENTOS-----------------------------------------------------------------------------------------------------------------------------------------------
-            //var url_api_listaEventos = "https://a19xwwe9oh.execute-api.eu-west-3.amazonaws.com/dev";
-            var url_api_listaEventos = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listaEventos";
+            cargarEventosFinca();	
+            //CARGAR LISTADO DE ENCUESTAS-------------------------------------------------------------------------------------------------------------------------------------------------
+            cargarEncuestasFinca();
+            //CARGAR LISTADO DE PROPIEDADES-----------------------------------------------------------------------------------------------------------------------------------------------
+            cargarPropiedadesFinca();
+			//CARGAR LISTADO DE DOCUMENTOS------------------------------------------------------------------------------------------------------------------------------------------------
+			cargarDocsFinca();	
+        },
+        error: function(response) {
+            console.log(response);
+            alert(response.responseText);
+        }
+    });
+	
+}
 
-            $.ajax({
-            	type: 'POST',
-            	url: url_api_listaEventos,
-            	contentType: 'application/json',
-            	data: dataRequest,
-            	success: function(response) {
+function cargarEventosFinca(){
 
-            		var contenedor_eventos = document.getElementById('div_listaEventos_id');
-            		var contador_eventos = document.getElementById('count_eventos_id');
-            		contador_eventos.innerHTML = response.count;
-                    contenedor_eventos.innerHTML = '';
-                    contenedor_eventos.style.marginTop = '10px';
+    var url_api_listaEventos = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listaEventos";
+    var finca = JSON.parse(sessionStorage.getItem('fincaActual_object'));
 
-                    response.futureEvents.forEach(function(evento){
+    var data = {
+        "estate_id": finca.ESTATE_ID
+    };
+    var dataRequest = JSON.stringify(data);
 
-                    	var startDate_epoch = evento.Start*1000;
-						var endDate_epoch = evento.End*1000;
+    $.ajax({
+        type: 'POST',
+        url: url_api_listaEventos,
+        contentType: 'application/json',
+        data: dataRequest,
+        success: function(response) {
 
-						var startDate = new Date(startDate_epoch).toLocaleDateString("es-ES", {
-					        year: 'numeric', month: '2-digit', day: '2-digit',
-					        hour: '2-digit', minute: '2-digit', 
-					        hour12: false
-					    });
+           	var contenedor_eventos = document.getElementById('div_listaEventos_id');
+            var contador_eventos = document.getElementById('count_eventos_id');
+            contador_eventos.innerHTML = response.count;
+            contenedor_eventos.innerHTML = '';
+            contenedor_eventos.style.marginTop = '10px';
 
-					    var endDate = new Date(endDate_epoch).toLocaleDateString("es-ES", {
-					        year: 'numeric', month: '2-digit', day: '2-digit',
-					        hour: '2-digit', minute: '2-digit', 
-					        hour12: false
-					    });
+            response.futureEvents.forEach(function(evento){
 
-                        var eventItem = document.createElement('a');
-                        eventItem.className = 'list-group-item list-group-item-action';
-                        var evtTitle = document.createElement('h5');
-                        evtTitle.innerHTML += evento.Titulo;
-						var evtFechaStart = document.createElement('p');
-						evtFechaStart.innerHTML="<strong>Fecha inicio:</strong> "+startDate;
-						var evtFechaEnd = document.createElement('p');
-						evtFechaEnd.innerHTML="<strong>Fecha inicio:</strong> "+endDate;
+	            var startDate_epoch = evento.Start*1000;
+				var endDate_epoch = evento.End*1000;
+
+				var startDate = new Date(startDate_epoch).toLocaleDateString("es-ES", {
+					year: 'numeric', month: '2-digit', day: '2-digit',
+					hour: '2-digit', minute: '2-digit', 
+					hour12: false
+				});
+
+				var endDate = new Date(endDate_epoch).toLocaleDateString("es-ES", {
+					year: 'numeric', month: '2-digit', day: '2-digit',
+					hour: '2-digit', minute: '2-digit', 
+					hour12: false
+				});
+
+	            var eventItem = document.createElement('a');
+	            eventItem.className = 'list-group-item list-group-item-action';
+	            var evtTitle = document.createElement('h5');
+	            evtTitle.innerHTML += evento.Titulo;
+				var evtFechaStart = document.createElement('p');
+				evtFechaStart.innerHTML="<strong>Fecha inicio:</strong> "+startDate;
+				var evtFechaEnd = document.createElement('p');
+				evtFechaEnd.innerHTML="<strong>Fecha inicio:</strong> "+endDate;
 
 
-                        eventItem.href = '#';
-                        eventItem.appendChild(evtTitle);
-                        eventItem.appendChild(evtFechaStart);
-                        eventItem.appendChild(evtFechaEnd);
+	            eventItem.href = '#';
+	            eventItem.appendChild(evtTitle);
+	            eventItem.appendChild(evtFechaStart);
+	            eventItem.appendChild(evtFechaEnd);
 
-                        eventItem.onclick = function(){
-                        	sessionStorage.setItem('evtActual', JSON.stringify(evento));
-                        	cargarInfoEvento();
-                        }
+	            eventItem.onclick = function(){
+	                sessionStorage.setItem('evtActual', JSON.stringify(evento));
+	                cargarInfoEvento();
+	            }
 
-                        contenedor_eventos.appendChild(eventItem);
-
-                    });
-            	},
-            	error: function(response){
-            		console.log(response);
-                    console.error(response.responseText);
-            	}
+                contenedor_eventos.appendChild(eventItem);
 
             });
-            //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        },
+        error: function(response){
+            console.log(response);
+            console.error(response.responseText);
+        }
 
-            //CARGAR LISTADO DE ENCUESTAS-------------------------------------------------------------------------------------------------------------------------------------------------
-            //var url_api_listaEncuestas = "https://y096rynude.execute-api.eu-west-3.amazonaws.com/dev";
-            var url_api_listaEncuestas = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listEncuestas";
-
-            $.ajax({
-            	type: 'POST',
-            	url: url_api_listaEncuestas,
-            	contentType: 'application/json',
-            	data: dataRequest,
-            	success: function(response){
-            		var contenedor_enc = document.getElementById('div_listaEncuestas_id');
-            		var contador_enc = document.getElementById('count_encuestas_id');
-            		contador_enc.innerHTML = response.count;
-                    contenedor_enc.innerHTML = '';
-                    contenedor_enc.style.marginTop = '10px';
-
-                    response.encuestas.forEach(function(enc){
-						var creationDate_epoch = enc.FechaCreacion*1000;
-						var ttlDate_epoch = enc.FechaTTL*1000;
-
-						var creationDate = new Date(creationDate_epoch).toLocaleDateString("es-ES", {
-					        year: 'numeric', month: '2-digit', day: '2-digit',
-					        hour: '2-digit', minute: '2-digit', second: '2-digit',
-					        hour12: false
-					    });
-
-					    var ttlDate = new Date(ttlDate_epoch).toLocaleDateString("es-ES", {
-					        year: 'numeric', month: '2-digit', day: '2-digit',
-					        hour: '2-digit', minute: '2-digit', second: '2-digit',
-					        hour12: false
-					    });
+    });
 
 
-					    var fechaActual = new Date();
-					    var fechaActual_epoch = Math.floor(fechaActual.getTime()/1000);
+}
 
-					    var diferencia = ttlDate_epoch - fechaActual_epoch*1000;
-					    const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+function cargarEncuestasFinca(){
+	var url_api_listaEncuestas = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listEncuestas";
 
-					    var motivo = enc.Motivo;
+	var finca = JSON.parse(sessionStorage.getItem('fincaActual_object'));
+
+    var data = {
+        "estate_id": finca.ESTATE_ID
+    };
+    var dataRequest = JSON.stringify(data);
+
+    $.ajax({
+        type: 'POST',
+        url: url_api_listaEncuestas,
+        contentType: 'application/json',
+        data: dataRequest,
+        success: function(response){
+           	var contenedor_enc = document.getElementById('div_listaEncuestas_id');
+            var contador_enc = document.getElementById('count_encuestas_id');
+            contador_enc.innerHTML = response.count;
+            contenedor_enc.innerHTML = '';
+            contenedor_enc.style.marginTop = '10px';
+
+            response.encuestas.forEach(function(enc){
+				var creationDate_epoch = enc.FechaCreacion*1000;
+				var ttlDate_epoch = enc.FechaTTL*1000;
+
+				var creationDate = new Date(creationDate_epoch).toLocaleDateString("es-ES", {
+					year: 'numeric', month: '2-digit', day: '2-digit',
+					hour: '2-digit', minute: '2-digit', second: '2-digit',
+					hour12: false
+				});
+
+				var ttlDate = new Date(ttlDate_epoch).toLocaleDateString("es-ES", {
+					year: 'numeric', month: '2-digit', day: '2-digit',
+					hour: '2-digit', minute: '2-digit', second: '2-digit',
+					hour12: false
+				});
+
+
+				var fechaActual = new Date();
+				var fechaActual_epoch = Math.floor(fechaActual.getTime()/1000);
+
+				var diferencia = ttlDate_epoch - fechaActual_epoch*1000;
+				const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+
+				var motivo = enc.Motivo;
 					   
-                        var encItem = document.createElement('a');
-                        encItem.className = 'list-group-item list-group-item-action';
-                        encItem.href = '#';
+                var encItem = document.createElement('a');
+                encItem.className = 'list-group-item list-group-item-action';
+                encItem.href = '#';
 
                     
-						var encTitle = document.createElement('h5');
-						var enc_tiempoRestante = document.createElement('p');
-						enc_tiempoRestante.style.color = 'red'; 
-						if(dias!=0)
-						{
-							enc_tiempoRestante.innerHTML="Esta encuesta caduca en "+dias+" días";
-						}else{
-							enc_tiempoRestante.innerHTML="Esta encuesta caduca hoy";
-						}						
+				var encTitle = document.createElement('h5');
+				var enc_tiempoRestante = document.createElement('p');
+				enc_tiempoRestante.style.color = 'red'; 
+				if(dias!=0)
+				{
+					enc_tiempoRestante.innerHTML="Esta encuesta caduca en "+dias+" días";
+				}else{
+					enc_tiempoRestante.innerHTML="Esta encuesta caduca hoy";
+				}						
 						
-						encTitle.innerHTML += motivo;
+				encTitle.innerHTML += motivo;
 
-                        encItem.appendChild(encTitle);
-                        encItem.appendChild(enc_tiempoRestante);
+                encItem.appendChild(encTitle);
+                encItem.appendChild(enc_tiempoRestante);
 
-                        encItem.onclick = function(){
-                        	//cargarMensaje(msg);
-                        	
-                        	sessionStorage.setItem('encActual', JSON.stringify(enc));
-                        	//CONTROL------
-                        	console.log(enc);
-                        	//-------------
-                        	cargarInfoEncuesta();
+                encItem.onclick = function(){
+                    sessionStorage.setItem('encActual', JSON.stringify(enc));
+                    //CONTROL------
+                    console.log(enc);
+                    //-------------
+                    cargarInfoEncuesta();
  
-                        }
-    
-                        contenedor_enc.appendChild(encItem);
-
-                    });
-
-            	},
-            	error: function(response){
-            		console.log(response);
-                    console.error(response.responseText);
-
-            	}
-
-            });
-			//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-            //CARGAR LISTADO DE PROPIEDADES-----------------------------------------------------------------------------------------------------------------------------------------------
-
-            //var url_api_listaProp = "https://tpygx3cl18.execute-api.eu-west-3.amazonaws.com/dev";
-            var url_api_listaProp = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listadoPropiedades';
-
-            $.ajax({
-                type: 'POST',
-                url: url_api_listaProp,
-                contentType: 'application/json',
-                data: dataRequest,
-                success: function(response) {
-                    var contenedor = document.getElementById('div_listaProp_id');
-                    contenedor.innerHTML = '';
-                    contenedor.style.marginTop = '30px';
-
-                    response.forEach(function(prop) {
-
-                    	var accordionItem = document.createElement('div');
-    					accordionItem.className = 'accordion accordion-flush';
-
-    					var accordionHeader = document.createElement('h2');
-    					accordionHeader.className = 'accordion-header';
-    					accordionHeader.id = 'heading' + prop.PROPERTY_ID;
-
-					    var accordionButton = document.createElement('button');
-					    accordionButton.className = 'accordion-button collapsed';
-					    accordionButton.setAttribute('type', 'button');
-					    accordionButton.setAttribute('data-bs-toggle', 'collapse');
-					    accordionButton.setAttribute('data-bs-target', '#collapse' + prop.PROPERTY_ID);
-					    accordionButton.setAttribute('aria-expanded', 'true');
-					    accordionButton.setAttribute('aria-controls', 'collapse' + prop.PROPERTY_ID);
-					    accordionButton.innerHTML = '<h6>Propiedad ' + prop.Piso + prop.Num + '</h6>';
-
-					    var accordionCollapse = document.createElement('div');
-					    accordionCollapse.id = 'collapse' + prop.PROPERTY_ID;
-					    accordionCollapse.className = 'accordion-collapse collapse';
-					    accordionCollapse.setAttribute('aria-labelledby', 'heading' + prop.PROPERTY_ID);
-					    accordionCollapse.setAttribute('data-bs-parent', '#accordionParent');
-
-
-					    var accordionBody = document.createElement('div');
-					    accordionBody.className = 'accordion-body d-flex justify-content-between align-items-center';
-
-    					var propertyInfoContainer = document.createElement('div');
-					    
-					    var descriptionInfo = document.createElement('p');
-					    descriptionInfo.innerHTML = `
-
-                        <strong>Tipo:</strong> ${prop.Type}<br>
-                        <strong>Descripción:</strong> ${prop.Description}<br>
-                        <strong>Share:</strong> ${prop.Share}%<br>
-                        <strong>IBAN:</strong> ${prop.IBAN}
-                        
-                    	`;
-
-					    propertyInfoContainer.appendChild(descriptionInfo);
-					    
-					    accordionBody.appendChild(propertyInfoContainer);
-
-    					var inviteButtonContainer = document.createElement('div');
-
-					    var iconAddUser = document.createElement('i');
-					    iconAddUser.className = 'bi bi-person-add';
-
-					    var botonInvite = document.createElement('button');
-					    botonInvite.className = 'btn btn-secondary align-self-center dropdown-toggle';
-					    botonInvite.setAttribute('data-bs-toggle', 'dropdown');
-					    botonInvite.setAttribute('aria-expanded', 'false');
-					    botonInvite.appendChild(iconAddUser);
-
-					    var dropdownMenu = document.createElement('ul');
-					    dropdownMenu.className = 'dropdown-menu';
-					    dropdownMenu.setAttribute('aria-labelledby', 'dropdownMenuButton');
-
-					    var dropdownItem1 = document.createElement('li');
-					    var dropdownLink1 = document.createElement('a');
-					    dropdownLink1.className = 'dropdown-item';
-					    dropdownLink1.href = '#';
-					    dropdownLink1.textContent = 'Añadir Usuario Existente';
-					    dropdownLink1.onclick = function() {
-					        sessionStorage.setItem('propiedadActual', prop.PROPERTY_ID);
-					        cargarBuscadorUsuario();
-					    };
-
-					    var dropdownItem2 = document.createElement('li');
-					    var dropdownLink2 = document.createElement('a');
-					    dropdownLink2.className = 'dropdown-item';
-					    dropdownLink2.href = '#';
-					    dropdownLink2.textContent = 'Invitar Nuevo Usuario';
-					    dropdownLink2.onclick = function() {
-					        sessionStorage.setItem('propiedadActual', prop.PROPERTY_ID);
-					        cargarFormularioInvitacion();
-					    };
-
-					    dropdownItem1.appendChild(dropdownLink1);
-					    dropdownMenu.appendChild(dropdownItem1);
-					    dropdownItem2.appendChild(dropdownLink2);
-					    dropdownMenu.appendChild(dropdownItem2);
-
-					    botonInvite.appendChild(dropdownMenu);
-					    inviteButtonContainer.appendChild(botonInvite);
-
-					    accordionBody.appendChild(inviteButtonContainer);
-
-					    accordionHeader.appendChild(accordionButton);
-					    accordionCollapse.appendChild(accordionBody);
-					    accordionItem.appendChild(accordionHeader);
-					    accordionItem.appendChild(accordionCollapse);
-
-					    contenedor.appendChild(accordionItem);
-
-                    });
-                },
-                error: function(response) {
-                    console.log(response);
-                    console.error(response.responseText);
                 }
+    
+                contenedor_enc.appendChild(encItem);
+
             });
-			//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-			//CARGAR LISTADO DE DOCUMENTOS------------------------------------------------------------------------------------------------------------------------------------------------
+        },
+        error: function(response){
+           	console.log(response);
+            console.error(response.responseText);
 
-			var url_api_listaDocs='https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listDocs';
+        }
 
-			$.ajax({
+    });
 
-				type: 'POST',
-                url: url_api_listaDocs,
-                contentType: 'application/json',
-                data: dataRequest,
-                success: function(response){
-                	var contenedor_2 = document.getElementById('div_listaDocs_id');
-                    contenedor_2.innerHTML = '';
-                    contenedor_2.style.marginTop = '30px';
+}
 
-                    response.forEach(function(doc) {
-                        var elementoLista_2 = document.createElement('div');
-                        elementoLista_2.className = 'list-group-item d-flex justify-content-between'; 
-                        elementoLista_2.style.borderBottom = '1px solid #eaeaea';
-                        elementoLista_2.style.paddingBottom = '5px';
-                        elementoLista_2.style.marginBottom = '5px';
+function cargarDocsFinca(){
+	var url_api_listaDocs='https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listDocs';
 
-                        var textContainer_2 = document.createElement('div'); 
-                        textContainer_2.className = 'me-auto'; 
-                        var nombre_file_div = document.createElement('div');
-                        nombre_file_div.innerHTML = "<strong>Nombre:</strong> " + doc.fileName;
-                        textContainer_2.appendChild(nombre_file_div);
+	var url_api_listaEncuestas = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listEncuestas";
 
-                        var ult_mod_div = document.createElement('div');
-                        ult_mod_div.innerHTML = "<strong>Fecha de subida:</strong> " + doc.LastModified;
-                        textContainer_2.appendChild(ult_mod_div);
+	var finca = JSON.parse(sessionStorage.getItem('fincaActual_object'));
 
-                        elementoLista_2.appendChild(textContainer_2); 
+    var data = {
+        "estate_id": finca.ESTATE_ID
+    };
+    var dataRequest = JSON.stringify(data);
 
-                        var buttonsContainer = document.createElement('div'); 
+	$.ajax({
 
-              
+		type: 'POST',
+        url: url_api_listaDocs,
+        contentType: 'application/json',
+        data: dataRequest,
+        success: function(response){
+            var contenedor_2 = document.getElementById('div_listaDocs_id');
+            contenedor_2.innerHTML = '';
+            contenedor_2.style.marginTop = '30px';
+
+            response.forEach(function(doc) {
+                var elementoLista_2 = document.createElement('div');
+                elementoLista_2.className = 'list-group-item d-flex justify-content-between'; 
+                elementoLista_2.style.borderBottom = '1px solid #eaeaea';
+                elementoLista_2.style.paddingBottom = '5px';
+                elementoLista_2.style.marginBottom = '5px';
+
+                var textContainer_2 = document.createElement('div'); 
+                textContainer_2.className = 'me-auto'; 
+                var nombre_file_div = document.createElement('div');
+                nombre_file_div.innerHTML = "<strong>Nombre:</strong> " + doc.fileName;
+                textContainer_2.appendChild(nombre_file_div);
+
+                var ult_mod_div = document.createElement('div');
+                ult_mod_div.innerHTML = "<strong>Fecha de subida:</strong> " + doc.LastModified;
+                textContainer_2.appendChild(ult_mod_div);
+
+                elementoLista_2.appendChild(textContainer_2); 
+
+                var buttonsContainer = document.createElement('div'); 
+
+                //CONTROL---------
+                console.log(doc.Key);
+                //----------------
+
+                var enlaceBorrar = document.createElement('a');
+			    enlaceBorrar.className = 'btn btn-danger btn-sm me-2';
+			    enlaceBorrar.innerHTML = 'Eliminar ';
+			    enlaceBorrar.href = '#';
+			    enlaceBorrar.onclick = function(event) {
+			    	sessionStorage.setItem('archivoActual', doc.Key);
+			        var modal = new bootstrap.Modal(document.getElementById('modal_borrar_archivo_id'));
+					modal.show();
+
+			    }
+			    var iconBorrar = document.createElement('i');
+			    iconBorrar.className = 'bi bi-trash3';
+			    enlaceBorrar.appendChild(iconBorrar);
+			    buttonsContainer.appendChild(enlaceBorrar);
+
+              			
                         /*var enlaceMail = document.createElement('a');
 			            enlaceMail.className = 'btn btn-secondary btn-sm me-2';
 			            enlaceMail.innerHTML = 'Enviar ';
@@ -1059,62 +993,167 @@ function cargarPaginaFinca() {
 			            enlaceMail.appendChild(iconMail);
 			            buttonsContainer.appendChild(enlaceMail);*/
 
+            			
+			    var enlaceDownload = document.createElement('a');
+			    var iconDownloadFile = document.createElement('i');
+			    iconDownloadFile.className = 'bi bi-file-earmark-arrow-down';
+			    enlaceDownload.className = 'btn btn-secondary btn-sm';
+			    enlaceDownload.innerHTML = 'Descargar ';
+			    enlaceDownload.href = '#';
+			    //enlaceDownload.href = 'https://tfm-app-icai.s3.eu-west-3.amazonaws.com/'+doc.Key;
+			    var url_archivo = 'https://tfm-app-icai.s3.eu-west-3.amazonaws.com/'+doc.Key;
+			    enlaceDownload.onclick = function() {
+			    	var newTab = window.open(url_archivo, '_blank');
 
-			            var enlaceDownload = document.createElement('a');
-			            var iconDownloadFile = document.createElement('i');
-			            iconDownloadFile.className = 'bi bi-file-earmark-arrow-down';
-			            enlaceDownload.className = 'btn btn-secondary btn-sm';
-			            enlaceDownload.innerHTML = 'Descargar ';
-			            enlaceDownload.href = '#';
-			            var ruta = doc.Key;
-			            enlaceDownload.appendChild(iconDownloadFile);
-			            enlaceDownload.setAttribute('data-key', ruta); 
-                       
-						enlaceDownload.onclick = function(event) {
-						    event.preventDefault(); 
-						    var archivoKey = this.getAttribute('data-key'); 
-						    
-						    $.ajax({
-						        method: 'POST',
-						        url: 'https://jaj6pl44sf.execute-api.eu-west-3.amazonaws.com/dev',
-						        contentType: 'application/json',
-						        data: JSON.stringify({ key: archivoKey }),
-						        success: function(response) {
+					if (newTab) {
+						newTab.focus();
+					} else {
+										            
+						alert('Por favor, desactiva el bloqueador de ventanas emergentes para descargar el archivo.');
+					}
 
-						        	var newTab = window.open(response.urlPreFirmada, '_blank');
-							        if (newTab) {
-							            newTab.focus();
-							        } else {
-							            alert('Por favor, desactiva el bloqueador de ventanas emergentes para descargar el archivo.');
-							        }
-						        },
-						        error: function(xhr, status, error) {
-						            console.error('Error al solicitar la URL pre-firmada: ', error);
-						        }
-						    });
-						};
-						buttonsContainer.appendChild(enlaceDownload); 
-            			elementoLista_2.appendChild(buttonsContainer); 
-						contenedor_2.appendChild(elementoLista_2);
+			    }
+			    enlaceDownload.appendChild(iconDownloadFile);
+				buttonsContainer.appendChild(enlaceDownload); 
+            	elementoLista_2.appendChild(buttonsContainer); 
+				contenedor_2.appendChild(elementoLista_2);
 
-                    });
-                },
-                error: function(response){
-                	console.log(response);
-                    console.error(response.responseText);
-                }
+            });
+        },
+        error: function(response){
+           	console.log(response);
+            console.error(response.responseText);
+        }
 
-			});	
-			//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------				
+	});	
+
+}
+
+function cargarPropiedadesFinca(){
+	var url_api_listaProp = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listadoPropiedades';
+
+    var finca = JSON.parse(sessionStorage.getItem('fincaActual_object'));
+
+    var data = {
+        "estate_id": finca.ESTATE_ID
+    };
+    var dataRequest = JSON.stringify(data);
+
+    $.ajax({
+        type: 'POST',
+        url: url_api_listaProp,
+        contentType: 'application/json',
+        data: dataRequest,
+        success: function(response) {
+            var contenedor = document.getElementById('div_listaProp_id');
+            contenedor.innerHTML = '';
+            contenedor.style.marginTop = '30px';
+
+            response.forEach(function(prop) {
+
+                var accordionItem = document.createElement('div');
+    			accordionItem.className = 'accordion accordion-flush';
+
+    			var accordionHeader = document.createElement('h2');
+    			accordionHeader.className = 'accordion-header';
+    			accordionHeader.id = 'heading' + prop.PROPERTY_ID;
+
+				var accordionButton = document.createElement('button');
+				accordionButton.className = 'accordion-button collapsed';
+				accordionButton.setAttribute('type', 'button');
+				accordionButton.setAttribute('data-bs-toggle', 'collapse');
+				accordionButton.setAttribute('data-bs-target', '#collapse' + prop.PROPERTY_ID);
+				accordionButton.setAttribute('aria-expanded', 'true');
+				accordionButton.setAttribute('aria-controls', 'collapse' + prop.PROPERTY_ID);
+				accordionButton.innerHTML = '<h6>Propiedad ' + prop.Piso + prop.Num + '</h6>';
+
+				var accordionCollapse = document.createElement('div');
+				accordionCollapse.id = 'collapse' + prop.PROPERTY_ID;
+				accordionCollapse.className = 'accordion-collapse collapse';
+				accordionCollapse.setAttribute('aria-labelledby', 'heading' + prop.PROPERTY_ID);
+				accordionCollapse.setAttribute('data-bs-parent', '#accordionParent');
+
+
+				var accordionBody = document.createElement('div');
+				accordionBody.className = 'accordion-body d-flex justify-content-between align-items-center';
+
+    			var propertyInfoContainer = document.createElement('div');
+					    
+				var descriptionInfo = document.createElement('p');
+				descriptionInfo.innerHTML = `
+
+                    <strong>Tipo:</strong> ${prop.Type}<br>
+                    <strong>Descripción:</strong> ${prop.Description}<br>
+                    <strong>Share:</strong> ${prop.Share}%<br>
+                    <strong>IBAN:</strong> ${prop.IBAN}
+                        
+                `;
+
+				propertyInfoContainer.appendChild(descriptionInfo);
+					    
+				accordionBody.appendChild(propertyInfoContainer);
+
+    			var inviteButtonContainer = document.createElement('div');
+
+				var iconAddUser = document.createElement('i');
+				iconAddUser.className = 'bi bi-person-add';
+
+				var botonInvite = document.createElement('button');
+				botonInvite.className = 'btn btn-secondary align-self-center dropdown-toggle';
+				botonInvite.setAttribute('data-bs-toggle', 'dropdown');
+				botonInvite.setAttribute('aria-expanded', 'false');
+				botonInvite.appendChild(iconAddUser);
+
+				var dropdownMenu = document.createElement('ul');
+				dropdownMenu.className = 'dropdown-menu';
+				dropdownMenu.setAttribute('aria-labelledby', 'dropdownMenuButton');
+
+				var dropdownItem1 = document.createElement('li');
+				var dropdownLink1 = document.createElement('a');
+				dropdownLink1.className = 'dropdown-item';
+				dropdownLink1.href = '#';
+				dropdownLink1.textContent = 'Añadir Usuario Existente';
+				dropdownLink1.onclick = function() {
+					sessionStorage.setItem('propiedadActual', prop.PROPERTY_ID);
+					cargarBuscadorUsuario();
+				};
+
+				var dropdownItem2 = document.createElement('li');
+				var dropdownLink2 = document.createElement('a');
+				dropdownLink2.className = 'dropdown-item';
+				dropdownLink2.href = '#';
+				dropdownLink2.textContent = 'Invitar Nuevo Usuario';
+				dropdownLink2.onclick = function() {
+					sessionStorage.setItem('propiedadActual', prop.PROPERTY_ID);
+					cargarFormularioInvitacion();
+				};
+
+				dropdownItem1.appendChild(dropdownLink1);
+				dropdownMenu.appendChild(dropdownItem1);
+				dropdownItem2.appendChild(dropdownLink2);
+				dropdownMenu.appendChild(dropdownItem2);
+
+				botonInvite.appendChild(dropdownMenu);
+				inviteButtonContainer.appendChild(botonInvite);
+
+				accordionBody.appendChild(inviteButtonContainer);
+
+				accordionHeader.appendChild(accordionButton);
+				accordionCollapse.appendChild(accordionBody);
+				accordionItem.appendChild(accordionHeader);
+				accordionItem.appendChild(accordionCollapse);
+
+				contenedor.appendChild(accordionItem);
+
+            });
         },
         error: function(response) {
             console.log(response);
-            alert(response.responseText);
+            console.error(response.responseText);
         }
     });
-	
-}
 
+}
 
 function cargarListadoPropiedades_Users() {
 
@@ -1547,8 +1586,20 @@ function cargarListadoPropiedades_Users() {
                                 docItem.className = 'list-group-item list-group-item-action';
                                 docItem.textContent = doc.fileName;
                                 docItem.href = '#';
-                                docItem.setAttribute('data-key', doc.Key);
-                                docItem.onclick = function(event) {
+                                //docItem.setAttribute('data-key', doc.Key);
+                                var url_archivo = 'https://tfm-app-icai.s3.eu-west-3.amazonaws.com/'+doc.Key;
+							    docItem.onclick = function() {
+							    	var newTab = window.open(url_archivo, '_blank');
+
+									if (newTab) {
+										newTab.focus();
+									} else {
+														            
+										alert('Por favor, desactiva el bloqueador de ventanas emergentes para descargar el archivo.');
+									}
+
+							    }
+                                /*docItem.onclick = function(event) {
                                     event.preventDefault();
                                     var archivoKey = this.getAttribute('data-key');
                                     // Solicitar la URL pre-firmada
@@ -1573,7 +1624,7 @@ function cargarListadoPropiedades_Users() {
 									            console.error('Error al solicitar la URL pre-firmada: ', error);
 									    }
 									});
-                                };
+                                };*/
                                 docsList.appendChild(docItem);
                             });
                         },
@@ -1590,5 +1641,6 @@ function cargarListadoPropiedades_Users() {
         });
     });
 }
+
 
 
