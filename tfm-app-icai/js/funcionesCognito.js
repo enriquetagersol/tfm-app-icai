@@ -17,8 +17,6 @@ var poolData = {
 //INICIO DE SESIÓN
 function signIn(){
 
-	document.getElementById("btn_signOut_id").style.display = "inline";
-
 	var username = document.getElementById("username_id").value;
     var password = document.getElementById("pass_id").value;
 
@@ -139,6 +137,7 @@ function continueLoginProcess() {
 	    }
 
 	    if (is_admin === "yes") {
+	    	document.getElementById("btn_signOut_id").style.display = "inline";
 	    	cargarListadoFincas();
 	    	cargarMensajesAdmin();
 	    	document.getElementById("inbox_admin_id").style.display="inline";
@@ -148,6 +147,7 @@ function continueLoginProcess() {
 			};
 
 	    } else if (is_admin === "No") {
+	    	document.getElementById("btn_signOut_id").style.display = "inline";
 	    	cargarListadoPropiedades_Users();
 	    } else {
 	    	//Manejo de alerta
