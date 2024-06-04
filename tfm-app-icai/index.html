@@ -74,9 +74,10 @@
 
 	    <!--Botones izquierda -->
 	    <div style="flex: 1;">
-	        <div class="btn-group">
-	            <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="inbox_admin_id" style="display: none">
-	                <span class="badge text-bg-secondary rounded-pill" id="count_mensajes_admin_id"> </span><i class="bi bi-inbox-fill"></i>
+	        <div class="btn-group" role="group" id="inbox_btn_group_id"style="display: none">
+	        	<button type="button" class="btn btn-light" onclick = "cargarMensajesAdmin()"><i class="bi bi-arrow-clockwise"></i></button>
+	            <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="inbox_admin_id">
+	                <span class="badge text-bg-secondary rounded-pill" id="count_mensajes_admin_id"></span><i class="bi bi-inbox-fill"></i>
 	            </button>
 	            <ul class="dropdown-menu" id="dropdownMenu_msg_id" style="position: absolute; z-index: 1000; width: 700px;">
 	                <!--Dropdown menu-->
