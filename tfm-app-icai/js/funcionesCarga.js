@@ -154,7 +154,7 @@ function cargarContactAdmin(){
 
 function cargarMensaje(){
 	var msg = JSON.parse(sessionStorage.getItem('msgActual'));
-	console.log(msg);
+
 	var url_messageDetail = "https://tfm-app-icai.s3.eu-west-3.amazonaws.com/contenidoMsg.html";
 	$.ajax({
 		type: 'GET',
@@ -475,7 +475,6 @@ function cargarListadoFincas(){
         var dataRequest = JSON.stringify(data);
         //-------------------------------------------
 
-        //var url_listadoFincas = 'https://qto101bjde.execute-api.eu-west-3.amazonaws.com/dev';
         var url_listadoFincas = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listadoFincas';
 
 		$.ajax({
@@ -916,7 +915,6 @@ function cargarEncuestasFinca(){
 function cargarDocsFinca(){
 	var url_api_listaDocs='https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listDocs';
 
-	var url_api_listaEncuestas = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listEncuestas";
 
 	var finca = JSON.parse(sessionStorage.getItem('fincaActual_object'));
 
@@ -976,43 +974,44 @@ function cargarDocsFinca(){
 			    enlaceBorrar.appendChild(iconBorrar);
 			    buttonsContainer.appendChild(enlaceBorrar);
 
-              			
-                        /*var enlaceMail = document.createElement('a');
-			            enlaceMail.className = 'btn btn-secondary btn-sm me-2';
-			            enlaceMail.innerHTML = 'Enviar ';
-			            enlaceMail.href = '#';
-			            enlaceMail.onclick = function(event) {
-			                event.preventDefault();
-			                //alert(doc.fileName);
-			                //enviarArchivo(doc.Key);
-			                sessionStorage.setItem('archivoActual', doc.Key);
-			                cargarEnviarArchivo();
-			            }
-			            var iconMail = document.createElement('i');
-			            iconMail.className = 'bi bi-envelope';
-			            enlaceMail.appendChild(iconMail);
-			            buttonsContainer.appendChild(enlaceMail);*/
 
-            			
 			    var enlaceDownload = document.createElement('a');
-			    var iconDownloadFile = document.createElement('i');
-			    iconDownloadFile.className = 'bi bi-file-earmark-arrow-down';
-			    enlaceDownload.className = 'btn btn-secondary btn-sm';
-			    enlaceDownload.innerHTML = 'Descargar ';
-			    enlaceDownload.href = '#';
-			    //enlaceDownload.href = 'https://tfm-app-icai.s3.eu-west-3.amazonaws.com/'+doc.Key;
-			    var url_archivo = 'https://tfm-app-icai.s3.eu-west-3.amazonaws.com/'+doc.Key;
-			    enlaceDownload.onclick = function() {
-			    	var newTab = window.open(url_archivo, '_blank');
+				var iconDownloadFile = document.createElement('i');
+				iconDownloadFile.className = 'bi bi-file-earmark-arrow-down';
+				enlaceDownload.className = 'btn btn-secondary btn-sm';
+				enlaceDownload.innerHTML = 'Descargar ';
+				enlaceDownload.href = '#';
 
-					if (newTab) {
-						newTab.focus();
-					} else {
-										            
-						alert('Por favor, desactiva el bloqueador de ventanas emergentes para descargar el archivo.');
-					}
+				enlaceDownload.onclick = function(event) {
+				    event.preventDefault();
+				    url_descarga = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/urlPrefirmada";
+				    var data_download = {
+				    	"key": doc.Key
+				    };
 
-			    }
+
+				    $.ajax({
+				        url: url_descarga, 
+				        type: 'POST',
+				        contentType: 'application/json',
+				        data: JSON.stringify(data_download),
+				        success: function(data) {
+				            const url = data.url;
+
+				            // Abrir una nueva ventana 
+				            var newTab = window.open(url, '_blank');
+				            if (!newTab) {
+				                alert('Desactiva el bloqueador de ventanas emergentes.');
+				            }
+				        },
+				        error: function(xhr, status, error) {
+				            console.error('Error al obtener la URL pre-firmada:', error);
+				            alert('Error al descargar el archivo. Inténtalo de nuevo más tarde.');
+				        }
+				    });
+				};
+
+
 			    enlaceDownload.appendChild(iconDownloadFile);
 				buttonsContainer.appendChild(enlaceDownload); 
             	elementoLista_2.appendChild(buttonsContainer); 
@@ -1581,52 +1580,71 @@ function cargarListadoPropiedades_Users() {
                     		contenedor_2.style.marginTop = '30px';
                             
                             docsResponse.forEach(function(doc) {
-                            	//Creación de la lista de documentos
-                                var docItem = document.createElement('a');
-                                docItem.className = 'list-group-item list-group-item-action';
-                                docItem.textContent = doc.fileName;
-                                docItem.href = '#';
-                                //docItem.setAttribute('data-key', doc.Key);
-                                var url_archivo = 'https://tfm-app-icai.s3.eu-west-3.amazonaws.com/'+doc.Key;
-							    docItem.onclick = function() {
-							    	var newTab = window.open(url_archivo, '_blank');
+                            	var elementoLista_2 = document.createElement('div');
+				                elementoLista_2.className = 'list-group-item d-flex justify-content-between'; 
+				                elementoLista_2.style.borderBottom = '1px solid #eaeaea';
+				                elementoLista_2.style.paddingBottom = '5px';
+				                elementoLista_2.style.marginBottom = '5px';
 
-									if (newTab) {
-										newTab.focus();
-									} else {
-														            
-										alert('Por favor, desactiva el bloqueador de ventanas emergentes para descargar el archivo.');
-									}
+				                var textContainer_2 = document.createElement('div'); 
+				                textContainer_2.className = 'me-auto'; 
+				                var nombre_file_div = document.createElement('div');
+				                nombre_file_div.innerHTML = "<strong>Nombre:</strong> " + doc.fileName;
+				                textContainer_2.appendChild(nombre_file_div);
 
-							    }
-                                /*docItem.onclick = function(event) {
-                                    event.preventDefault();
-                                    var archivoKey = this.getAttribute('data-key');
-                                    // Solicitar la URL pre-firmada
-									    $.ajax({
-									        method: 'POST',
-									        url: 'https://jaj6pl44sf.execute-api.eu-west-3.amazonaws.com/dev',
-									        contentType: 'application/json',
-									        data: JSON.stringify({ key: archivoKey }),
-									        success: function(response) {
+				                var ult_mod_div = document.createElement('div');
+				                ult_mod_div.innerHTML = "<strong>Fecha de subida:</strong> " + doc.LastModified;
+				                textContainer_2.appendChild(ult_mod_div);
 
-									        	var newTab = window.open(response.urlPreFirmada, '_blank');
+				                elementoLista_2.appendChild(textContainer_2); 
 
-										        // Si el bloqueador de pop-ups está activado, newTab será null
-										        if (newTab) {
-										            newTab.focus();
-										        } else {
-										            
-										            alert('Por favor, desactiva el bloqueador de ventanas emergentes para descargar el archivo.');
-										        }
-									        },
-									        error: function(xhr, status, error) {
-									            console.error('Error al solicitar la URL pre-firmada: ', error);
-									    }
-									});
-                                };*/
-                                docsList.appendChild(docItem);
-                            });
+                				var buttonsContainer = document.createElement('div');
+
+
+                				var enlaceDownload = document.createElement('a');
+
+								var iconDownloadFile = document.createElement('i');
+								iconDownloadFile.className = 'bi bi-file-earmark-arrow-down';
+								enlaceDownload.className = 'btn btn-secondary btn-sm';
+								enlaceDownload.innerHTML = 'Descargar ';
+								enlaceDownload.href = '#';
+
+								enlaceDownload.onclick = function(event) {
+								    event.preventDefault();
+								    url_descarga = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/urlPrefirmada";
+								    var data_download = {
+								    	"key": doc.Key
+								    };
+
+								    $.ajax({
+								        url: url_descarga, 
+								        type: 'POST',
+								        contentType: 'application/json',
+								        data: JSON.stringify(data_download),
+								        success: function(data) {
+								            const url = data.url;
+
+								            // Abrir una nueva ventana 
+								            var newTab = window.open(url, '_blank');
+								            if (!newTab) {
+								                alert('Desactiva el bloqueador de ventanas emergentes.');
+								            }
+								        },
+								        error: function(xhr, status, error) {
+								            console.error('Error al obtener la URL pre-firmada:', error);
+								            alert('Error al descargar el archivo. Inténtalo de nuevo más tarde.');
+								        }
+								    });
+								};
+
+
+							    enlaceDownload.appendChild(iconDownloadFile);
+								buttonsContainer.appendChild(enlaceDownload); 
+				            	elementoLista_2.appendChild(buttonsContainer); 
+								contenedor_2.appendChild(elementoLista_2);
+								docsList.appendChild(contenedor_2);
+
+							});
                         },
                         error: function(xhr, status, error) {
                             console.error('Error al cargar los documentos:', error);
