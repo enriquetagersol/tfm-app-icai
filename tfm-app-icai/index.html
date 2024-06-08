@@ -32,77 +32,77 @@
     <script src="./js/funcionesUser.js"></script>
 
     <style>
-
-	.navbar {
-	   width: 100%; 
-	   display: flex; 
-	   justify-content: center; 
-           background-color: #295E7E;
-	}	
+        .navbar {
+            width: 100%; 
+            display: flex; 
+            justify-content: flex-start; 
+            background-color: #295E7E;
+            padding: 0 10px;
+            height: 50px;
+        }   
         #contenido-ajax {
             width: 60%; 
-	    max-height: 87vh; 
-	    height: auto; 
-	    margin: 30px auto; 
-	    background-color: white;
-	    padding: 20px;
-	    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-	    border-radius: 10px;
-	    overflow: auto; 
-	    display: flex;
-	    flex-direction: column; 
-	    justify-content: flex-start;      
+            max-height: 87vh; 
+            height: auto; 
+            margin: 30px auto; 
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: auto; 
+            display: flex;
+            flex-direction: column; 
+            justify-content: flex-start;      
         }
         #formulario-login {
             width: 80%; 
             padding: 20px; 
             margin-left: auto;
-	    margin-right: auto;
+            margin-right: auto;
             display: flex; 
-	    flex-direction: column; 
-	    justify-content: center; 
-	}	
-
+            flex-direction: column; 
+            justify-content: center; 
+        }
+        .btn-group .btn {
+            margin: 0;
+        }
     </style>
-
 </head>
 
 <body style="background-color:#AEBAC2;">
+    <nav class="navbar">
+        <!--Botones izquierda -->
+        <div style="flex: 1;">
+            <div class="btn-group" role="group" id="inbox_btn_group_id" style="display: none; margin: 0;">
+                <button type="button" class="btn btn-light" onclick="cargarMensajesAdmin()" style="margin: 0;"><i class="bi bi-arrow-clockwise"></i></button>
+                <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="inbox_admin_id" style="margin: 0;">
+                    <span class="badge text-bg-secondary rounded-pill" id="count_mensajes_admin_id"></span><i class="bi bi-inbox-fill"></i>
+                </button>
+                <ul class="dropdown-menu" id="dropdownMenu_msg_id" style="position: absolute; z-index: 1000; width: 700px; margin: 0;">
+                    <!--Dropdown menu-->
+                </ul>
+            </div>
+        </div>
 
-<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
-	<nav class="navbar" style="background-color:#295E7E; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; height: 50px">
+        <!-- Título centrado -->
+        <div style="flex: 0 1 auto;">
+            <span class="navbar-brand mb-0 h1" style="color: ghostwhite;" id="titulo_app_id">MI APLICACIÓN</span>
+        </div>
 
-	    <!--Botones izquierda -->
-	    <div style="flex: 1;">
-	        <div class="btn-group" role="group" id="inbox_btn_group_id"style="display: none">
-	        	<button type="button" class="btn btn-light" onclick = "cargarMensajesAdmin()"><i class="bi bi-arrow-clockwise"></i></button>
-	            <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="inbox_admin_id">
-	                <span class="badge text-bg-secondary rounded-pill" id="count_mensajes_admin_id"></span><i class="bi bi-inbox-fill"></i>
-	            </button>
-	            <ul class="dropdown-menu" id="dropdownMenu_msg_id" style="position: absolute; z-index: 1000; width: 700px;">
-	                <!--Dropdown menu-->
-	            </ul>
-	        </div>
-	    </div>
+        <!-- Botones derecha -->
+        <div style="flex: 1; display: flex; justify-content: flex-end;">
+            <button type="button" id="btn_add_finca_id" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#modal_RegFinca_id" onclick="cargarFormularioFinca()" style="display: none; margin: 0;">
+                Nueva Finca <i class="bi bi-building-fill-add"></i>
+            </button>
+            <button type="button" id="btn_signOut_id" class="btn btn-light" onclick="signOut()" style="display: none; margin: 0 5px;">Cerrar sesión</button>
+        </div>
+    </nav>
 
-	    <!-- Título centrado -->
-	    <div style="flex: 0 1 auto;">
-	        <span class="navbar-brand mb-0 h1" style="color: ghostwhite;" id="titulo_app_id">MI APLICACIÓN</span>
-	    </div>
-
-	    <!-- Botones derecha -->
-	    <div style="flex: 1; display: flex; justify-content: flex-end;">
-	        <button type="button" id="btn_add_finca_id" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#modal_RegFinca_id" onclick="cargarFormularioFinca()" style="display: none;">
-	            Nueva Finca <i class="bi bi-building-fill-add"></i>
-	        </button>
-	        <button type="button" id="btn_signOut_id" class="btn btn-light" onclick="signOut()" style="display: none; margin-left: 5px;">Cerrar sesión</button>
-	    </div>
-	</nav>
 <!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 	<div id="contenido-ajax">
 		<div id="formulario-login">
-		   <div>
+			<div>
 		      <label for="username_id" style="font-weight: bold;">Usuario</label>
 		      <input type="text" class="form-control" id="username_id">
 		    </div>
@@ -115,12 +115,34 @@
 		    <button type="button" class="btn btn-secondary" onclick="signIn()">Iniciar sesión</button>
 		    <br>
 		    <div class="w-100">
-		    	<div class="alert alert-danger w-100 m-0"  role="alert" style="display: none;" id="error_login_alert_id">
-		    </div>
-	   	</div>
-	    </div>
+		      <div class="alert alert-danger w-100 m-0"  role="alert" style="display: none;" id="error_login_alert_id">
+		      </div>
+	   		</div>
+		</div>
 	</div>
 
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal ¿Eliminar archivo?-->
+	<div class="modal fade" id="modal_borrar_archivo_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-sm">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#FF5743;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;"><i class="bi bi-exclamation-triangle-fill"></i> Aviso</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_borrar_archivo_body_id">
+	      	<h6>¿Eliminar archivo definitivamente?</h6>
+	      </div>
+	      <div class="modal-footer" style="background-color:#FF5743;">
+			  <div>
+			    
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal" onclick="eliminarArchivo()">Eliminar</button>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
 
 <!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 	<!-- Modal Registrar Finca-->
@@ -134,7 +156,8 @@
 	      <div class="modal-body" id="modal_RegFinca_body_id">
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
-			  <div>	    
+			  <div>
+			    
 			    <button type="button" class="btn btn-light" onclick="registerEstate()">Registrar</button>
 			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
 			  </div>
@@ -213,11 +236,12 @@
 	      <div class="modal-body" id="modal_RegProp_body_id">
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
-		<div>  
-		    <button type="button" class="btn btn-light" onclick="registerProperty()">Registrar</button>
-		    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
-		</div>
-	      </div>
+			  <div>
+			    
+			    <button type="button" class="btn btn-light" onclick="registerProperty()">Registrar</button>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			  </div>
+			</div>
 	    </div>
 	  </div>
 	</div>
@@ -233,11 +257,12 @@
 	      <div class="modal-body" id="modal_uploadArchivos_body_id">
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
-		<div>
-	          <button type="button" class="btn btn-light" id="uploadFileButton" onclick="uploadFile()">Subir archivo</button>
-		  <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
-		</div>
-		</div>
+			  <div>
+			    
+			    <button type="button" class="btn btn-light" id="uploadFileButton" onclick="uploadFile()">Subir archivo</button>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			  </div>
+			</div>
 	    </div>
 	  </div>
 	</div>
@@ -422,7 +447,8 @@
 	      <div class="modal-body" id="modal_difundido_body_id">
 	      </div>
 	      <div class="modal-footer" style="background-color:#295E7E;">
-		<div>
+			  <div>
+			    
 			    <button type="button" class="btn btn-light" id="createEventButton" onclick="difundirMensaje()">Enviar Mensaje</button>
 			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
 			  </div>
@@ -432,5 +458,4 @@
 	</div>
 
 </body>
-	
 </html>
