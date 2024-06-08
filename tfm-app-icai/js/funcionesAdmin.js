@@ -80,9 +80,10 @@ function registerEstate(){
 
         var data = JSON.stringify(dataEstate);
 
-        // CONTROL 
+        // CONTROL Revisa la consola para asegurarte de que los datos se están capturando correctamente.
         console.log("Datos enviados a la API: ", data);
 
+        //var url = 'https://19wdfy2c13.execute-api.eu-west-3.amazonaws.com/dev';
         var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/addEstateToBBDD';
 
         $.ajax({
@@ -121,6 +122,7 @@ function registerEstate(){
 
 function registerProperty(){
 	
+    //recogemos el valor del id de al finca (almacenado en la sesión)
 	var id_finca = sessionStorage.getItem('fincaActual');
 
     //CONTROL------------------
@@ -141,7 +143,7 @@ function registerProperty(){
         setTimeout(function() {
             document.getElementById("error_newProp_alert_id").style.display = 'none';
         }, 5000); 
-        return; 
+        return; //Detiene la ejecución de la función si falta algún dato
 
     }
 
@@ -157,10 +159,10 @@ function registerProperty(){
 
 	var data = JSON.stringify(dataProp);
 
-    // CONTROL 
+    // CONTROL Revisa la consola para asegurarte de que los datos se están capturando correctamente.
     console.log("Datos enviados a la API: ", data);
 
-
+    //var url = 'https://pkggdo537b.execute-api.eu-west-3.amazonaws.com/dev';
     var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/addPropertytoBBDD';
 
 
@@ -182,6 +184,8 @@ function registerProperty(){
             cargarListadoFincas();
     	},
     	error: function(xhr, status, error){
+    		// Aquí manejas una respuesta de error.
+            // 'xhr' es el objeto XMLHttpRequest, que contiene la respuesta completa, incluyendo el cuerpo y los encabezados.
             //CONTROL
             console.error("Error en la respuesta: ", xhr.responseText);
             console.error("Detalle del error: ", status, error);
@@ -209,23 +213,26 @@ function upload(){
             reader.onload = function(e) {
                 const content = e.target.result; // contenido del archivo como texto
 
+                //var url_uploadcsv = 'https://1p0pq68cfi.execute-api.eu-west-3.amazonaws.com/dev';
                 var url_uploadcsv = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/uploadcsv';
 
                 // Realizar la llamada AJAX
                 $.ajax({
                     url: url_uploadcsv,
                     type: 'POST',
-                    data: content, 
-                    processData: false, 
-                    contentType: 'text/csv; charset=utf-8', 
+                    data: content, // enviar el contenido directamente
+                    processData: false, // no procesar los datos
+                    contentType: 'text/csv; charset=utf-8', // establecer el tipo de contenido como CSV UTF-8
                     headers: {
-                        'X-File-Name': name_file 
+                        'X-File-Name': name_file // Encabezado personalizado con el nombre del archivo
                     },
                     success: function(response) {
                         console.log('Archivo subido con éxito:', response);
+                        //cargarAlertaOK("Archivo subido con éxito");
                     },
                     error: function(xhr, status, error) {
                         console.error('Error al subir archivo:', error);
+                        //cargarAlertaError("Error al subir archivo");
                     }
                 });
             };
@@ -337,6 +344,7 @@ function userToProperty(user_id, rol, email){
 	var data = JSON.stringify(dataToBBDD);
 	//alert(data);
 
+    //var url_userToProp = 'https://231boxpcv4.execute-api.eu-west-3.amazonaws.com/dev';
     var url_userToProp = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/userToProperty';
 
 
@@ -453,6 +461,36 @@ function crearEvento(){
     });
 }
 
+function eliminarArchivo(){
+
+    var archivo_key = sessionStorage.getItem('archivoActual');
+
+    var dataToSend = {
+        "objectKey": archivo_key
+    };
+
+    var url = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/borrarArchivo";
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(dataToSend),
+        success: function(response) {
+            alert('Archivo eliminado');
+        },
+        error: function(xhr, status, error) {
+
+            //CONTROL---------------------------------------
+            console.error('Error al crear el evento', error);
+            //----------------------------------------
+        }
+
+
+    });
+
+}
+
 
 
 function marcarLeido(){
@@ -464,6 +502,7 @@ function marcarLeido(){
         "id": id
     };
 
+    //var url = 'https://okku2m8a50.execute-api.eu-west-3.amazonaws.com/dev';
     var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/marcarLeido';
 
     $.ajax({
@@ -472,7 +511,6 @@ function marcarLeido(){
         contentType: 'applicaton/json',
         data: JSON.stringify(dataToSend),
         success: function(response){
-            cargarPaginaFinca(finca);
             //Manejo de alerta-----------------------------------------------------------------------------------------------------------------------
             document.getElementById("leido_OK_alert_id").innerHTML = '<i class="bi bi-check-circle-fill"></i>'+" Mensaje leido";
             document.getElementById("leido_OK_alert_id").style.display="inline";
@@ -534,7 +572,7 @@ function cancelarEvento(){
         "id": id
     };
 
-
+    //var url = 'https://xrbuqwrxi2.execute-api.eu-west-3.amazonaws.com/dev';
     var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/cancelEvent';
 
     $.ajax({
@@ -577,6 +615,7 @@ function crearEncuesta(){
         "finca_id": finca_id
     }
 
+    //var url = 'https://6cujl5905c.execute-api.eu-west-3.amazonaws.com/dev';
     var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/crearEncuesta';
 
     $.ajax({
@@ -622,6 +661,7 @@ function difundirMensaje(){
 
     console.log(JSON.stringify(dataToSend));
 
+    //var url = 'https://tcfe126mgb.execute-api.eu-west-3.amazonaws.com/dev';
     var url = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/difundirMensaje';
     $.ajax({
         url: url,
