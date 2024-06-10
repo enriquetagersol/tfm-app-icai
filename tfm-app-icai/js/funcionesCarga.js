@@ -154,7 +154,7 @@ function cargarContactAdmin(){
 
 function cargarMensaje(){
 	var msg = JSON.parse(sessionStorage.getItem('msgActual'));
-
+	console.log(msg);
 	var url_messageDetail = "https://tfm-app-icai.s3.eu-west-3.amazonaws.com/contenidoMsg.html";
 	$.ajax({
 		type: 'GET',
@@ -475,6 +475,7 @@ function cargarListadoFincas(){
         var dataRequest = JSON.stringify(data);
         //-------------------------------------------
 
+        //var url_listadoFincas = 'https://qto101bjde.execute-api.eu-west-3.amazonaws.com/dev';
         var url_listadoFincas = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listadoFincas';
 
 		$.ajax({
@@ -775,13 +776,15 @@ function cargarEventosFinca(){
 	            var startDate_epoch = evento.Start*1000;
 				var endDate_epoch = evento.End*1000;
 
-				var startDate = new Date(startDate_epoch).toLocaleDateString("es-ES", {
+
+				var startDate = convertirFechaUTC(startDate_epoch).toLocaleDateString("es-ES", {
 					year: 'numeric', month: '2-digit', day: '2-digit',
 					hour: '2-digit', minute: '2-digit', 
 					hour12: false
 				});
+				
 
-				var endDate = new Date(endDate_epoch).toLocaleDateString("es-ES", {
+				var endDate = convertirFechaUTC(endDate_epoch).toLocaleDateString("es-ES", {
 					year: 'numeric', month: '2-digit', day: '2-digit',
 					hour: '2-digit', minute: '2-digit', 
 					hour12: false
@@ -846,19 +849,6 @@ function cargarEncuestasFinca(){
             response.encuestas.forEach(function(enc){
 				var creationDate_epoch = enc.FechaCreacion*1000;
 				var ttlDate_epoch = enc.FechaTTL*1000;
-
-				var creationDate = new Date(creationDate_epoch).toLocaleDateString("es-ES", {
-					year: 'numeric', month: '2-digit', day: '2-digit',
-					hour: '2-digit', minute: '2-digit', second: '2-digit',
-					hour12: false
-				});
-
-				var ttlDate = new Date(ttlDate_epoch).toLocaleDateString("es-ES", {
-					year: 'numeric', month: '2-digit', day: '2-digit',
-					hour: '2-digit', minute: '2-digit', second: '2-digit',
-					hour12: false
-				});
-
 
 				var fechaActual = new Date();
 				var fechaActual_epoch = Math.floor(fechaActual.getTime()/1000);
@@ -973,6 +963,7 @@ function cargarDocsFinca(){
 			    iconBorrar.className = 'bi bi-trash3';
 			    enlaceBorrar.appendChild(iconBorrar);
 			    buttonsContainer.appendChild(enlaceBorrar);
+
 
 
 			    var enlaceDownload = document.createElement('a');
@@ -1133,6 +1124,8 @@ function cargarPropiedadesFinca(){
 				dropdownMenu.appendChild(dropdownItem2);
 
 				botonInvite.appendChild(dropdownMenu);
+	
+				//--------------------
 				inviteButtonContainer.appendChild(botonInvite);
 
 				accordionBody.appendChild(inviteButtonContainer);
@@ -1158,8 +1151,9 @@ function cargarListadoPropiedades_Users() {
 
     restoreCognitoSession_Users(function() {
 
-        var user_id = sub_user.getValue();
-        sessionStorage.setItem('userActual', user_id);
+        //var user_id = sub_user.getValue();
+        var user_id = sessionStorage.getItem('userActual');
+        console.log(user_id);
         var data = {
             "user_id": user_id
         };
@@ -1317,17 +1311,29 @@ function cargarListadoPropiedades_Users() {
 		                    	var startDate_epoch = evento.Start*1000;
 								var endDate_epoch = evento.End*1000;
 
-								var startDate = new Date(startDate_epoch).toLocaleDateString("es-ES", {
+								/*var startDate = new Date(startDate_epoch).toLocaleDateString("es-ES", {
 							        year: 'numeric', month: '2-digit', day: '2-digit',
 							        hour: '2-digit', minute: '2-digit', 
 							        hour12: false
-							    });
+							    });*/
 
-							    var endDate = new Date(endDate_epoch).toLocaleDateString("es-ES", {
+							    var startDate = convertirFechaUTC(startDate_epoch).toLocaleDateString("es-ES", {
+									year: 'numeric', month: '2-digit', day: '2-digit',
+									hour: '2-digit', minute: '2-digit', 
+									hour12: false
+								});
+
+							    /*var endDate = new Date(endDate_epoch).toLocaleDateString("es-ES", {
 							        year: 'numeric', month: '2-digit', day: '2-digit',
 							        hour: '2-digit', minute: '2-digit', 
 							        hour12: false
-					    		});
+					    		});*/
+
+					    		var endDate = convertirFechaUTC(endDate_epoch).toLocaleDateString("es-ES", {
+									year: 'numeric', month: '2-digit', day: '2-digit',
+									hour: '2-digit', minute: '2-digit', 
+									hour12: false
+								});
 
 		                        var eventItem = document.createElement('a');
 		                        eventItem.className = 'list-group-item list-group-item-action';
@@ -1419,18 +1425,6 @@ function cargarListadoPropiedades_Users() {
 								var creationDate_epoch = enc.FechaCreacion*1000;
 								var ttlDate_epoch = enc.FechaTTL*1000;
 
-								var creationDate = new Date(creationDate_epoch).toLocaleDateString("es-ES", {
-							        year: 'numeric', month: '2-digit', day: '2-digit',
-							        hour: '2-digit', minute: '2-digit', second: '2-digit',
-							        hour12: false
-							    });
-
-							    var ttlDate = new Date(ttlDate_epoch).toLocaleDateString("es-ES", {
-							        year: 'numeric', month: '2-digit', day: '2-digit',
-							        hour: '2-digit', minute: '2-digit', second: '2-digit',
-							        hour12: false
-							    });
-
 
 							    var fechaActual = new Date();
 							    var fechaActual_epoch = Math.floor(fechaActual.getTime()/1000);
@@ -1520,7 +1514,7 @@ function cargarListadoPropiedades_Users() {
                     infoButton.type = 'button';
                     infoButton.setAttribute('data-bs-toggle', 'collapse');
                     infoButton.setAttribute('data-bs-target', `#infoFinca${index}`);
-                    infoButton.textContent = 'Información de la Finca';
+                    infoButton.textContent = 'Información de la Propiedad';
                     cardBody.appendChild(infoButton);
 
                     var infoCollapse = document.createElement('div');
@@ -1658,6 +1652,11 @@ function cargarListadoPropiedades_Users() {
             }
         });
     });
+}
+
+function convertirFechaUTC(epochTime) {
+    const date = new Date(epochTime);
+    return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
 }
 
 
