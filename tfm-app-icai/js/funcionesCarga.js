@@ -116,23 +116,6 @@ function cargarNuevoEvento(){
 	});
 }
 
-function cargarEnviarArchivo(){
-	var url_EnviarArchivo = "https://tfm-app-icai.s3.eu-west-3.amazonaws.com/enviarArchivo.html";
-	$.ajax({
-		type: 'GET',
-		url: url_EnviarArchivo,
-		success: function(response){
-			document.getElementById("modal_mandar_archivo_body_id").innerHTML=response;
-			var modal = new bootstrap.Modal(document.getElementById('modal_mandar_archivo_id'));
-			modal.show();
-		},
-		error:function(response)
-		{
-			console.log(response);
-			alert(response);
-		}
-	});
-}
 
 function cargarContactAdmin(){
 	var url_ContactAdmin = "https://tfm-app-icai.s3.eu-west-3.amazonaws.com/contactAdmin.html";
@@ -163,8 +146,18 @@ function cargarMensaje(){
 			document.getElementById("modal_msg_body_id").innerHTML=response;
 			var asunto = document.getElementById("titulo_msg_id");
 			var contenido = document.getElementById("descripcion_contact_id");
+			var remitente = document.getElementById("remitente_id");
+			var propiedad = document.getElementById("propiedad_id");
 			asunto.innerHTML = msg.Asunto;
+			remitente.innerHTML = "<strong>De:</strong> "+msg.userInfo.first_name+" "+msg.userInfo.last_name;
+			propiedad.innerHTML = "<strong>Propiedad:</strong> "+msg.propInfo.Piso+"-"+msg.propInfo.Num+" ("+msg.estateInfo.name+")";
 			contenido.innerHTML = msg.Mensaje;
+			if(msg.Estado!='Pendiente'){
+				document.getElementById("marcarLeidoButton").disabled = true;
+			}
+			else{
+				document.getElementById("marcarLeidoButton").disabled = false;
+			}
 			var modal = new bootstrap.Modal(document.getElementById('modal_msg_id'));
 			modal.show();
 		}, 
@@ -1124,7 +1117,6 @@ function cargarPropiedadesFinca(){
 				dropdownMenu.appendChild(dropdownItem2);
 
 				botonInvite.appendChild(dropdownMenu);
-	
 				//--------------------
 				inviteButtonContainer.appendChild(botonInvite);
 
@@ -1658,6 +1650,5 @@ function convertirFechaUTC(epochTime) {
     const date = new Date(epochTime);
     return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
 }
-
 
 
