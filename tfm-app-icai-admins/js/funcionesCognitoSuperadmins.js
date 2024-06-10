@@ -112,7 +112,13 @@ function signIn(){
             });
         },
         onFailure: function (err) {
-            alert(err.message || JSON.stringify(err));
+            //alert(err.message || JSON.stringify(err));
+            //Manejo de alerta
+            document.getElementById("error_login_alert_id").innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>'+"Usuario o contraseña incorrecto";
+            document.getElementById("error_login_alert_id").style.display="inline";
+            setTimeout(function() {
+                document.getElementById("error_login_alert_id").style.display = 'none';
+            }, 5000);
         }
     });
 }
@@ -423,3 +429,4 @@ function inviteAdmin(){
     });
 
 }
+
