@@ -355,7 +355,14 @@ function userToProperty(user_id, rol, email){
     	contentType: 'application/json',
     	data: data,
     	success: function(response){
+            cargarPropiedadesFinca();
     		console.log("Respuesta recibida: ", response);
+            document.getElementById("user_found_alert_id").style.display = 'none';
+            document.getElementById("user_asignado_alert_id").innerHTML = "Usuario vinculado a propiedad correctamente";
+            document.getElementById("user_asignado_alert_id").style.display="inline";
+            setTimeout(function() {
+                document.getElementById("user_asignado_alert_id").style.display = 'none';
+            }, 5000);
     	},
     	error: function(xhr, status, error){
             console.error("Error en la respuesta: ", xhr.responseText);
@@ -491,7 +498,62 @@ function eliminarArchivo(){
 
 }
 
+/*function enviarArchivo(){
 
+    var archivo_id = sessionStorage.getItem('archivoActual');
+    var finca_id = sessionStorage.getItem('fincaActual');
+
+    var asunto = document.getElementById("asunto_id").value;
+    var mensaje = document.getElementById("mensaje_id").value;
+
+    if(!asunto || !mensaje){
+        //Manejo de alerta-------------------------------------------------------------------------------------------------------------------
+        document.getElementById("error_enviar_archivo_alert_id").innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>'+" Por favor, rellene todos los campos";
+        document.getElementById("error_enviar_archivo_alert_id").style.display="inline";
+        setTimeout(function() {
+            document.getElementById("error_enviar_archivo_alert_id").style.display = 'none';
+        }, 5000); 
+        //-------------------------------------------------------------------------------------------------------------------------------
+
+    }
+
+    var dataToSend = {
+        "asunto": asunto,
+        "mensaje": mensaje,
+        "archivo_id": archivo_id,
+        "finca_id": finca_id
+    };
+
+    //CONTROL------------------
+    console.log(dataToSend);
+    //-------------------------
+
+    $.ajax({
+        url: 'https://4wx0df7o03.execute-api.eu-west-3.amazonaws.com/dev',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(dataToSend),
+        success: function(response){
+            //Manejo de alerta---------------------------------------------------------------------------------------------------------------------
+            document.getElementById("enviar_archivo_OK_alert_id").innerHTML = '<i class="bi bi-check-circle-fill"></i>'+" Archivo enviado con éxito";
+            document.getElementById("enviar_archivo_OK_alert_id").style.display="inline";
+            setTimeout(function() {
+                document.getElementById("enviar_archivo_OK_alert_id").style.display = 'none';
+            }, 5000);
+            //--------------------------------------------------------------------------------------------------------------------------------------
+        },
+        error: function(xhr, status, error){
+            //Manejo de alerta-------------------------------------------------------------------------------------------------------------------------
+            document.getElementById("error_enviar_archivo_alert_id").innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>'+" Error al enviar archivo, inténtelo más tarde";
+            document.getElementById("error_enviar_archivo_alert_id").style.display="inline";
+            setTimeout(function() {
+                document.getElementById("error_enviar_archivo_alert_id").style.display = 'none';
+            }, 5000);
+            //--------------------------------------------------------------------------------------------------------------------------------------
+        }
+
+    });
+}*/
 
 function marcarLeido(){
     var msg = JSON.parse(sessionStorage.getItem('msgActual'));
@@ -728,7 +790,7 @@ function downloadSurveyCSV() {
 
 function downloadInfoEventCSV() {
     var evt = JSON.parse(sessionStorage.getItem('evtActual'));
-    var fincaId = sessionStorage.getItem('fincaActual')
+    var fincaId = sessionStorage.getItem('fincaActual');
     var evtId = evt.EVENT_ID;
     const apiUrl = 'https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/eventoToCsv'; 
 
@@ -769,5 +831,85 @@ function downloadFile(url) {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+}
+
+function eliminarUsuario(user_id, tipo, propiedad){
+    var url = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/borrarUsuario";
+    var data = {
+        "user_id": user_id,
+        "property_id": propiedad,
+        "tipo": tipo
+    };
+
+
+    var dataRequest = JSON.stringify(data);
+
+    $.ajax({
+        type: 'POST',
+        url: url,
+        contentType: 'application/json',
+        data: dataRequest,
+        success: function(response) {
+            cargarPropiedadesFinca();
+            document.getElementById("lista_OK_alert_id").innerHTML = '<i class="bi bi-check-circle-fill"></i>'+" Usuario desvinculado de la propiedad";
+            document.getElementById("lista_OK_alert_id").style.display="inline";
+            setTimeout(function() {
+                document.getElementById("lista_OK_alert_id").style.display = 'none';
+            }, 5000);
+            console.log('Usuario eliminado exitosamente:', response);
+            // Aquí puedes actualizar la interfaz de usuario para reflejar los cambios;
+        },
+        error: function(xhr, status, error) {
+            console.error('Error al eliminar el usuario:', error);
+            adocument.getElementById("error_lista_alert_id").innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>'+" Error al desvincular usuario. Intentelo de nuevo más tarde";
+            document.getElementById("error_lista_alert_id").style.display="inline";
+            setTimeout(function() {
+                document.getElementById("error_lista_alert_id").style.display = 'none';
+            }, 5000);
+        }
+    });
+
+}
+
+function contactarUsuario(){
+
+    var url = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/contactarUsuario";
+    var asunto = document.getElementById('titulo_contact_id').value;
+    var mensaje =  document.getElementById('descripcion_contact_id').value;
+    var email = sessionStorage.getItem('emailActual');
+    var data = {
+        "email": email,
+        "asunto": asunto,
+        "mensaje": mensaje
+    };
+
+
+    var dataRequest = JSON.stringify(data);
+
+    $.ajax({
+        type: 'POST',
+        url: url,
+        contentType: 'application/json',
+        data: dataRequest,
+        success: function(response) {
+            document.getElementById("contact_OK_alert_id").innerHTML = '<i class="bi bi-check-circle-fill"></i>'+" Mensaje enviado con éxito";
+            document.getElementById("contact_OK_alert_id").style.display="inline";
+            setTimeout(function() {
+                document.getElementById("contact_OK_alert_id").style.display = 'none';
+            }, 5000);
+
+            // Aquí puedes actualizar la interfaz de usuario para reflejar los cambios;
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+            //Manejo de alerta-----------------------------------------------------------------------------------------------------------------------------------------
+            document.getElementById("error_contact_alert_id").innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>'+" Error al enviar mensaje, inténtelo más tarde";
+            document.getElementById("error_contact_alert_id").style.display="inline";
+            setTimeout(function() {
+                document.getElementById("error_contact_alert_id").style.display = 'none';
+            }, 5000);
+        }
+    });
+
 }
 
