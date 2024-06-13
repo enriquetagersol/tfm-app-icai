@@ -116,6 +116,23 @@ function cargarNuevoEvento(){
 	});
 }
 
+function cargarEnviarArchivo(){
+	var url_EnviarArchivo = "https://tfm-app-icai.s3.eu-west-3.amazonaws.com/enviarArchivo.html";
+	$.ajax({
+		type: 'GET',
+		url: url_EnviarArchivo,
+		success: function(response){
+			document.getElementById("modal_mandar_archivo_body_id").innerHTML=response;
+			var modal = new bootstrap.Modal(document.getElementById('modal_mandar_archivo_id'));
+			modal.show();
+		},
+		error:function(response)
+		{
+			console.log(response);
+			alert(response);
+		}
+	});
+}
 
 function cargarContactAdmin(){
 	var url_ContactAdmin = "https://tfm-app-icai.s3.eu-west-3.amazonaws.com/contactAdmin.html";
@@ -453,6 +470,27 @@ function cargarFormularioDifundido(){
 		}
 
 	});
+}
+
+function cargarContactarUsuario(email){
+	sessionStorage.setItem('emailActual', email);
+	var url = 'https://tfm-app-icai.s3.eu-west-3.amazonaws.com/contactAdmin.html';
+	$.ajax({
+		type: 'GET',
+		url: url,
+		success: function(response){
+			document.getElementById("modal_contactarUsuario_body_id").innerHTML=response;
+			var modal = new bootstrap.Modal(document.getElementById('modal_contactarUsuario_id'));
+			modal.show();
+		},
+		error:function(response)
+		{
+			console.log(response);
+			alert(response);
+		}
+
+	});
+
 }
 
 function cargarListadoFincas(){
@@ -957,6 +995,22 @@ function cargarDocsFinca(){
 			    enlaceBorrar.appendChild(iconBorrar);
 			    buttonsContainer.appendChild(enlaceBorrar);
 
+              			
+                        /*var enlaceMail = document.createElement('a');
+			            enlaceMail.className = 'btn btn-secondary btn-sm me-2';
+			            enlaceMail.innerHTML = 'Enviar ';
+			            enlaceMail.href = '#';
+			            enlaceMail.onclick = function(event) {
+			                event.preventDefault();
+			                //alert(doc.fileName);
+			                //enviarArchivo(doc.Key);
+			                sessionStorage.setItem('archivoActual', doc.Key);
+			                cargarEnviarArchivo();
+			            }
+			            var iconMail = document.createElement('i');
+			            iconMail.className = 'bi bi-envelope';
+			            enlaceMail.appendChild(iconMail);
+			            buttonsContainer.appendChild(enlaceMail);*/
 
 
 			    var enlaceDownload = document.createElement('a');
@@ -1117,6 +1171,33 @@ function cargarPropiedadesFinca(){
 				dropdownMenu.appendChild(dropdownItem2);
 
 				botonInvite.appendChild(dropdownMenu);
+				
+				//--------------------
+
+				var botonPropietarios = document.createElement('button');
+				botonPropietarios.className='btn btn-secondary me-2';
+				botonPropietarios.innerHTML = 'Propietarios ';
+				if(!prop.Propietarios || prop.Propietarios.length === 0){
+					botonPropietarios.disabled=true;
+				}else{
+					botonPropietarios.onclick = function(){
+						cargarListaUsuarios(prop.PROPERTY_ID, prop.Propietarios, 'Propietarios');
+					}
+				}
+				var botonInquilinos = document.createElement('button');
+				botonInquilinos.className='btn btn-secondary me-2';
+				botonInquilinos.innerHTML = 'Inquilinos ';
+				if(!prop.Inquilinos || prop.Inquilinos.length === 0){
+					botonInquilinos.disabled=true;
+
+				}else{
+					botonInquilinos.onclick = function(){
+
+						cargarListaUsuarios(prop.PROPERTY_ID, prop.Inquilinos, 'Inquilinos');
+					}
+				}
+				inviteButtonContainer.appendChild(botonPropietarios);
+				inviteButtonContainer.appendChild(botonInquilinos);
 				//--------------------
 				inviteButtonContainer.appendChild(botonInvite);
 
@@ -1136,6 +1217,94 @@ function cargarPropiedadesFinca(){
             console.error(response.responseText);
         }
     });
+
+}
+
+function cargarListaUsuarios(propiedad, lista, tipo)
+{
+	var url = "https://8grvzt4bs5.execute-api.eu-west-3.amazonaws.com/dev/listarUsuarios";
+	var data = {
+		"lista": lista
+	};
+
+	var dataRequest = JSON.stringify(data);
+
+	$.ajax({
+		type: 'POST',
+        url: url,
+        contentType: 'application/json',
+        data: dataRequest,
+        success: function(response) {
+        	var modal = new bootstrap.Modal(document.getElementById('modal_ListarUsuarios_id'));
+        	
+
+        	var divUsuarios = document.getElementById('ListaUsuarios_id');
+        	divUsuarios.innerHTML='';
+
+        	var titulo = document.getElementById('exampleModalLabel_listaUsers');
+        	titulo.innerHTML='';
+        	titulo.innerHTML=tipo;
+
+
+
+        	response.forEach(function(usuario){
+        		var elementoLista = document.createElement('div');
+                elementoLista.className = 'list-group-item d-flex justify-content-between';
+                elementoLista.style.borderBottom = '1px solid #eaeaea';
+                elementoLista.style.paddingBottom = '5px';
+                elementoLista.style.marginBottom = '5px';
+
+                var textContainer = document.createElement('div');
+                textContainer.className = 'me-auto';
+                var nombreDiv = document.createElement('div');
+                nombreDiv.innerHTML = "<strong>Nombre:</strong> " + usuario.first_name + " " + usuario.last_name;
+                textContainer.appendChild(nombreDiv);
+
+                elementoLista.appendChild(textContainer);
+                var buttonsContainer = document.createElement('div');
+
+
+			    var enlaceEliminar = document.createElement('a');
+                enlaceEliminar.className = 'btn btn-danger btn-sm me-2';
+                var iconEliminar = document.createElement('i');
+                iconEliminar.className = 'bi bi-trash3';
+                enlaceEliminar.appendChild(iconEliminar);
+                buttonsContainer.appendChild(enlaceEliminar);
+                enlaceEliminar.href = '#';
+                enlaceEliminar.onclick = function(event) {
+
+                    eliminarUsuario(usuario.USER_ID, tipo, propiedad);
+                }
+
+                var enlaceContactar = document.createElement('a');
+                enlaceContactar.className = 'btn btn-secondary btn-sm';
+                enlaceContactar.innerHTML = 'Contactar ';
+                var iconContactar = document.createElement('i');
+                iconContactar.className = 'bi bi-envelope';
+                enlaceContactar.appendChild(iconContactar);
+                buttonsContainer.appendChild(enlaceContactar);
+                enlaceContactar.href = '#';
+                enlaceContactar.onclick = function(event) {
+
+                    cargarContactarUsuario(usuario.email);
+                }
+
+
+
+                buttonsContainer.appendChild(enlaceEliminar);
+                buttonsContainer.appendChild(enlaceContactar);
+                elementoLista.appendChild(buttonsContainer);
+                divUsuarios.appendChild(elementoLista);
+
+        	});
+        	modal.show();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error al cargar la lista de usuarios:', error);
+            alert('Error. Inténtalo de nuevo más tarde.');
+
+        }
+	})
 
 }
 
