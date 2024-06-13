@@ -164,6 +164,56 @@
 	    </div>
 	  </div>
 	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Listar Usuarios-->
+	<div class="modal fade" id="modal_ListarUsuarios_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel_listaUsers" style="color: ghostwhite;"></h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_ListarUsuarios_body_id">
+	     	<div id="ListaUsuarios_id">
+	     	</div>
+	     	<br>
+	     	<div class="w-100">
+		         <div class="alert alert-danger w-100 m-0"  role="alert" style="display: none;" id="error_lista_alert_id"> 
+		         </div>
+		         <div class="alert alert-success w-100 m-0" role="alert" style="display: none;" id="lista_OK_alert_id">
+		         </div>
+		    </div>
+		    <br>
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Contactar Usuario-->
+	<div class="modal fade" id="modal_contactarUsuario_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Mensaje a usuario</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_contactarUsuario_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+			  <div>
+			    
+			    <button type="button" class="btn btn-light" id="createEventButton" onclick="contactarUsuario()">Enviar Mensaje</button>
+			    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+			  </div>
+			</div>
+	    </div>
+	  </div>
+	</div>
 
 <!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 	<!-- Modal Info Finca -->
@@ -205,7 +255,25 @@
 	    </div>
 	  </div>
 	</div>
-
+<!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+	<!-- Modal Mandar Archivo Mail>
+	<div class="modal fade" id="modal_mandar_archivo_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="background-color:#295E7E;">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: ghostwhite;">Enviar archivo</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body" id="modal_mandar_archivo_body_id">
+	      </div>
+	      <div class="modal-footer" style="background-color:#295E7E;">
+	        
+	        <button type="button" class="btn btn-light" onclick="enviarArchivo()" id="botonEnviar_archivo">Enviar</button>
+	        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div-->
 <!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 	<!-- Modal Registrar Propiedad-->
 	<div class="modal fade" id="modal_RegProp_id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
