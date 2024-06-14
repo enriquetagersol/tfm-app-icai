@@ -9,6 +9,8 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient();
 exports.handler = async (event) => {
     
     console.log("Evento recibido:", event);
+    const data = JSON.parse(event.body);
+    console.log(data);
     try {
         
         let cognitoUser = {};
@@ -23,19 +25,19 @@ exports.handler = async (event) => {
         });
         let item;
         
-        if(!cognitoUser.empresa)
+        if(!data.empresa)
         {
 
             item = {
                 TableName: "Users",
                 Item: {
-                    "USER_ID": cognitoUser.sub, 
-                    "email": cognitoUser.email,
-                    "first_name": cognitoUser.name,
-                    "last_name": cognitoUser.family_name,
-                    "IS_ADMIN": cognitoUser.isAdmin,
-                    "phone": cognitoUser.phone_number,
-                    "username": cognitoUser.username
+                    "USER_ID": data.sub, 
+                    "email": data.email,
+                    "first_name": data.name,
+                    "last_name": data.family_name,
+                    "IS_ADMIN": data.isAdmin,
+                    "phone": data.phone_number,
+                    "username": data.username
      
                 }
             }
@@ -43,25 +45,31 @@ exports.handler = async (event) => {
             item = {
                 TableName: "Users",
                 Item: {
-                    "USER_ID": cognitoUser.sub, 
-                    "email": cognitoUser.email,
-                    "first_name": cognitoUser.name,
-                    "last_name": cognitoUser.family_name,
-                    "IS_ADMIN": cognitoUser.isAdmin,
-                    "phone": cognitoUser.phone_number,
-                    "username": cognitoUser.username,
-                    "empresa": cognitoUser.empresa
+                    "USER_ID": data.sub, 
+                    "email": data.email,
+                    "first_name": data.name,
+                    "last_name": data.family_name,
+                    "IS_ADMIN": data.isAdmin,
+                    "phone": data.phone_number,
+                    "username": data.username,
+                    "empresa": data.empresa
      
                 }
             }
             
         }
-        //};
+
 
         await dynamoDB.put(item).promise();
 
         return {
             statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*", 
+                "Access-Control-Allow-Credentials": true, 
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "OPTIONS,GET,PUT,POST,DELETE" // Métodos permitidos
+            },
             body: JSON.stringify('Usuario agregado a la base de datos')
         };
     } catch (error) {
@@ -69,7 +77,14 @@ exports.handler = async (event) => {
         console.error("Error:", error.message);
         return {
             statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*", 
+                "Access-Control-Allow-Credentials": true, 
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "OPTIONS,GET,PUT,POST,DELETE" // Métodos permitidos
+            },
             body: JSON.stringify('Error al procesar la solicitud')
         };
     }
 };
+
