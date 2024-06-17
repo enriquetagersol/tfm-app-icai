@@ -18,4 +18,4 @@ En este repositorio:
 * Carpeta Lamda -> contiene las funciones Lambda
 * Carpeta csv-parse-layer -> Layer para procesar csv en Lambda
 
-En este repositorio también se crea una carpeta llamada "Lambda" donde se almacenan los códigos de las funciones Lambda 
+
