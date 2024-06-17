@@ -282,8 +282,8 @@ function inviteUser(){
     AWS.config.update({
 	    region: region, 
 	    credentials: new AWS.Credentials({
-		    accessKeyId: 'AKIA2F5X4UUYB42FUJQC',
-		    secretAccessKey: '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'
+		    accessKeyId: 'AKIA2F5X4UUYBAWQKDEE',// Nueva: AKIA2F5X4UUYBAWQKDEE Antigua: AKIA2F5X4UUYB42FUJQC
+		    secretAccessKey: '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'//Nueva: YnN/MM6NJAgN/sxtnmaSYmi4QlNlZgit5gXexArN Antigua: InDm8+Tgii5VvNkfoP2IrzQYbX+S7Jl6eSaQli8o
 	    })
 	});
 	
@@ -387,8 +387,8 @@ function changeTempPass(){
 	AWS.config.update({
 	    region: region,
 	    credentials: new AWS.Credentials({
-		    accessKeyId: 'AKIA2F5X4UUYB42FUJQC',
-		    secretAccessKey: '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'
+		    accessKeyId: 'AKIA2F5X4UUYBAWQKDEE', // Nueva: AKIA2F5X4UUYBAWQKDEE Antigua: AKIA2F5X4UUYB42FUJQC
+		    secretAccessKey: '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' //Nueva: YnN/MM6NJAgN/sxtnmaSYmi4QlNlZgit5gXexArN Antigua: InDm8+Tgii5VvNkfoP2IrzQYbX+S7Jl6eSaQli8o
 	    })
 	});
 
